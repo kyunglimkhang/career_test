@@ -21,7 +21,7 @@ export default function Home() {
           <h1>직업 가치관 검사</h1>
   
           <div>
-            <label for="name">
+            <label>
               <p>이름</p>
             </label>
 
@@ -34,7 +34,7 @@ export default function Home() {
           
           {/* 성별 */}
           <div>
-            <label for="gender">
+            <label>
               <p>성별</p>
             </label>
 
@@ -46,7 +46,7 @@ export default function Home() {
                 value="100323"
                 onChange={genderSelect}
               />
-              <label for="male">남성</label>
+              <label>남성</label>
             
               <input
                 type="radio"
@@ -55,11 +55,11 @@ export default function Home() {
                 value="100324"
                 onChange={genderSelect}
               />
-              <label for="female">여성</label>
+              <label>여성</label>
             </div>
           </div>
 
-          <Link to="/intro">
+          <Link to="/test">
             <button type="submit" id="start_btn" disabled={!name||!gender}>검사 시작</button>
           </Link>
         </div>
