@@ -37,7 +37,16 @@ const Test = () => {
             setPage(page+1);
         }
     }
+
+    const show_by_page = () => {
+        $('.question').hide();
+        $('.'+page).show();
+    }
     
+    useEffect(() => {
+        show_by_page();
+      }, [show_by_page]);
+
     const show_Question_result = () => {
             const new_question_result = [];
             for (var i=0; i<questions.length; i++) {
@@ -97,6 +106,10 @@ const Test = () => {
             setQuestion_result(new_question_result);
     }
     
+    useEffect(() => {
+        show_Question_result();
+      }, [show_Question_result]);
+
     return (
         <div>
             <div>
@@ -104,7 +117,7 @@ const Test = () => {
             </div>
             <div>
                 <button type="submit" id="previous_btn" onClick={()=>{pagechange('previous')}}>이전</button>
-                <button type="submit" id="next_btn" onClick={()=>{pagechange('next')}} disabled>다음</button>
+                <button type="submit" id="next_btn" onClick={()=>{pagechange('next')}}>다음</button>
             </div>
         </div>
     ); 
