@@ -23,13 +23,12 @@ export default function Home() {
           <div>
             <label>
               <p>이름</p>
+              <input
+                type="text"
+                name="name"
+                onChange={nameChange}
+              />
             </label>
-
-            <input
-              type="text"
-              name="name"
-              onChange={nameChange}
-            />
           </div>
 
           <div>
@@ -38,27 +37,31 @@ export default function Home() {
             </label>
 
             <div>
-              <input
-                type="radio"
-                name="gender"
-                id="male"
-                value="100323"
-                onChange={genderSelect}
-              />
-              <label>남성</label>
-            
-              <input
-                type="radio"
-                name="gender"
-                id="female"
-                value="100324"
-                onChange={genderSelect}
-              />
-              <label>여성</label>
+              <label>
+                <input
+                  type="radio"
+                  name="gender"
+                  id="male"
+                  value="100323"
+                  onChange={genderSelect}
+                />
+                남성
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="gender"
+                  id="female"
+                  value="100324"
+                  onChange={genderSelect}
+                />
+                여성
+              </label>
             </div>
           </div>
 
-          <Link to="/test">
+          <Link to="/intro">
             <button type="submit" id="start_btn" disabled={!name||!gender}>검사 시작</button>
           </Link>
         </div>
