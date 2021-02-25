@@ -1,10 +1,9 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
     const [name, setName] = useState("")
     const [gender, setGender] = useState("")
-    const start_btn = document.querySelector('#start_btn')
-    // const [disabled, setDisabled] = useState(true)
 
     function nameChange(e) {
         console.log(e.target.value);
@@ -14,61 +13,54 @@ export default function Home() {
     function genderSelect(e) {
         var selected_val = e.target.value;
         console.log(selected_val);
-        
-        //check_only_one
-        var chkbox = document.getElementsByName("chkbox");
-        for(var i=0; i<chkbox.length; i++){
-        if(chkbox[i].value === selected_val){
-            chkbox[i].checked = true;
-        } else {
-            chkbox[i].checked = false;
-        }
-        }
-
         setGender(selected_val);
     }
 
-    if (name && gender) {
-        console.log(name);
-        console.log(gender);
-        document.querySelector('#start_btn').disabled = false;
-    }
     return (
         <div>
           <h1>직업 가치관 검사</h1>
+  
           <div>
-            <lable>
+            <label>
               <p>이름</p>
-            </lable>
+            </label>
+
             <input
               type="text"
               name="name"
               onChange={nameChange}
             />
           </div>
+
           <div>
-            <lable>
+            <label>
               <p>성별</p>
-            </lable>
-            <lable>
+            </label>
+
+            <div>
               <input
-                type="checkbox"
-                name="chkbox"
-                id="man"
-                value="man"
+                type="radio"
+                name="gender"
+                id="male"
+                value="100323"
                 onChange={genderSelect}
               />
-              남성
+              <label>남성</label>
+            
               <input
-                type="checkbox"
-                name="chkbox"
-                id="woman"
-                value="woman"
+                type="radio"
+                name="gender"
+                id="female"
+                value="100324"
                 onChange={genderSelect}
               />
-              여성
-            </lable>
+              <label>여성</label>
+            </div>
           </div>
+
+          <Link to="/test">
+            <button type="submit" id="start_btn" disabled={!name||!gender}>검사 시작</button>
+          </Link>
         </div>
     );
 }
