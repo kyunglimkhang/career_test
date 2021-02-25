@@ -31,8 +31,7 @@ export default function Home() {
               onChange={nameChange}
             />
           </div>
-          
-          {/* 성별 */}
+
           <div>
             <label>
               <p>성별</p>
