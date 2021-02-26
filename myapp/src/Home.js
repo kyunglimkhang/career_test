@@ -1,19 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, createContext, useContext } from "react";
 import { Link } from "react-router-dom";
+import {UserContext} from "./UserContext"
 
-export default function Home() {
+function Home() {
+    const {userInfo, setUserInfo} = useContext(UserContext);
     const [name, setName] = useState("")
     const [gender, setGender] = useState("")
 
     function nameChange(e) {
-        console.log(e.target.value);
         setName(e.target.value);
+        setUserInfo((prevState) => ({
+          ...prevState,
+          name: e.target.value
+        }));
     }
 
     function genderSelect(e) {
         var selected_val = e.target.value;
-        console.log(selected_val);
         setGender(selected_val);
+        setUserInfo((prevState) => ({
+          ...prevState,
+          gender: e.target.value
+        }));
     }
 
     return (
@@ -67,3 +75,5 @@ export default function Home() {
         </div>
     );
 }
+
+export default Home;
