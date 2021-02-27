@@ -1,126 +1,184 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useContext} from "react";
+import { useHistory } from "react-router-dom";
 import axios from 'axios';
-import $ from 'jquery';
+import {UserContext} from "./UserContext";
+import API_KEY from './config';
 
 const Test = () => {
+    var history = useHistory();
+    
     const apiUrl = `http://www.career.go.kr/inspct/openapi/test/questions?apikey=32a2c9717c399817549cbb5169b959b7&q=6`;
+    const postApiUrl = `http://www.career.go.kr/inspct/openapi/test/report`;
+    
+    const {userInfo, setUserInfo} = useContext(UserContext);
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [page, setPage] = useState(1);
-    const [question_result, setQuestion_result] = useState([]);
-    
+    const [questionResult, setQuestionResult] = useState([]);
+
     const fetchQuestions = useCallback(async () => {
         const response = await axios.get(apiUrl);
         setQuestions(response.data.RESULT);
         setAnswers(() => {
-          return new Array(response.data.RESULT.length);
+            return new Array(response.data.RESULT.length);
         });
-      }, [apiUrl]);
-    
-    useEffect(() => {
-        fetchQuestions();
-      }, [fetchQuestions]);
-    
-    
+    }, [apiUrl]);
+
+    const timeStamp = () => {
+        const date = new Date();
+        const dateToTimestamp = date.getTime();
+        console.log(dateToTimestamp);
+        return dateToTimestamp;
+    }
+
+    useEffect(()=>{
+        timeStamp();
+        console.log(timeStamp());
+    },[]);
+
+    const postResult = useCallback(() => {
+        const answerForm = () => {
+            var answerdata = answers;
+            for (var i=1; i<answers.length; i++){
+                answerdata[i-1] = i + '=' + answers[i-1];
+            }
+            answerdata = answerdata.join(' ');
+            return answerdata;
+        }
+
+        const data = {
+            "apikey": API_KEY,
+            "qestrnSeq": "6",
+            "trgetSe": "100209",
+            "name": userInfo.name,
+            "gender": userInfo.gender,
+            "startDtm": timeStamp(),
+            "answers": answerForm()
+        };
+        
+        console.log(data);
+
+        axios.post(postApiUrl, data)
+        .then(function (response) { 
+            console.log(response); 
+        })
+        .catch(function (error) { 
+            console.log(error); 
+        });
+        
+        return alert("post");
+    }, [answers]);
+
     //페이지 전환
-    const pagechange = (type) => {
+    const handlePageChange = (type) => {
         var new_page = 0
-        if (type == 'previous'){
+        if (type == 'previous') {
             new_page = page - 1;
-            $('.question').hide();
-            $('.'+new_page).show();
-            setPage(page-1);
+            if (new_page === 0) {
+                history.push('/intro');
+            } else {
+                setPage(page - 1);
+            }
         } else {
             new_page = page + 1;
-            $('.question').hide();
-            $('.'+new_page).show();
-            setPage(page+1);
+            if (new_page === parseInt(questions.length / 5) + 2) {
+                postResult();
+                // history.push('/outro');
+            } else {
+                setPage(page + 1);
+            }
         }
     }
 
-    const show_by_page = () => {
-        $('.question').hide();
-        $('.'+page).show();
-    }
-    
-    useEffect(() => {
-        show_by_page();
-      }, [show_by_page]);
-
-    const show_Question_result = () => {
-            const new_question_result = [];
-            for (var i=0; i<questions.length; i++) {
-                var question_Num = questions[i].qitemNo
-                var question = questions[i].question
-                var answer01 = questions[i].answer01
-                var answer02 = questions[i].answer02
-                var answerScore01 = questions[i].answerScore01
-                var answerScore02 = questions[i].answerScore02
-        
-                var page_index = 1
-        
-                if (question_Num % 5 === 0) {
-                    page_index = parseInt(question_Num/5)
-                } else {
-                    page_index = parseInt(question_Num/5) + 1
+    const isButtonDisabled = useMemo(() => {
+        let isDisabled = false;
+        questions.forEach((question) => {
+            const question_Num = parseInt(question.qitemNo, 10);
+            if (Math.ceil(question_Num / 5) === page) {
+                if (!answers[question_Num - 1]) {
+                    isDisabled = true;
                 }
-                
-                new_question_result.push(
-                    <div class={page_index+" question"} key={question_Num}>
-                        <h3>{question}</h3>
-                        <div>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name={`answers[${question_Num - 1}]`}
-                                    onChange={() => {
-                                    setAnswers((current) => {
-                                        const newAnswers = [...current];
-                                        newAnswers[question_Num - 1] = answerScore01;
-                                        return newAnswers;
-                                    });
-                                    }}
-                                />
-                                {answer01}
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="radio"
-                                    name={`answers[${question_Num - 1}]`}
-                                    onChange={() => {
-                                    setAnswers((current) => {
-                                        const newAnswers = [...current];
-                                        newAnswers[question_Num - 1] = answerScore02;
-                                        return newAnswers;
-                                    });
-                                    }}
-                                />
-                                {answer02}
-                            </label>
-                        </div>
-                    </div>
-                )
+            }
+        });
+        return isDisabled;
+    }, [answers, page]);
+
+    const showQuestionResult = () => {
+        const new_questionResult = [];
+        for (var i = 0; i < questions.length; i++) {
+            var question_Num = parseInt(questions[i].qitemNo)
+            var question = questions[i].question
+            var answer01 = questions[i].answer01
+            var answer02 = questions[i].answer02
+            var answerScore01 = questions[i].answerScore01
+            var answerScore02 = questions[i].answerScore02
+
+            var page_index = 1
+
+            if (question_Num % 5 === 0) {
+                page_index = parseInt(question_Num / 5)
+            } else {
+                page_index = parseInt(question_Num / 5) + 1
             }
 
-            setQuestion_result(new_question_result);
+            const handleAnswerChange = (e) => {
+                setAnswers((current) => {
+                    const question_index = e.target.name.split('answers')[1];
+                    const newAnswers = [...current];
+                    newAnswers[question_index] = e.target.value;
+                    return newAnswers;
+                });
+            }
+
+            new_questionResult.push(
+                <div className={page_index + " question"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
+                    <h3>{question}</h3>
+                    <div>
+                        <label>
+                            <input
+                                type="radio"
+                                name={`answers${question_Num - 1}`}
+                                value={answerScore01}
+                                onChange={handleAnswerChange}
+                            />
+                            {answer01}
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name={`answers${question_Num - 1}`}
+                                value={answerScore02}
+                                onChange={handleAnswerChange}
+                            />
+                            {answer02}
+                        </label>
+                    </div>
+                </div>
+            )
+        }
+        setQuestionResult(new_questionResult);
     }
-    
+
     useEffect(() => {
-        show_Question_result();
-      }, [show_Question_result]);
+        showQuestionResult();
+    }, [questions, answers, page]);
+
+    useEffect(() => {
+        fetchQuestions();
+    }, [fetchQuestions]);
 
     return (
         <div>
             <div>
-                {question_result}
+                {questionResult}
             </div>
             <div>
-                <button type="submit" id="previous_btn" onClick={()=>{pagechange('previous')}}>이전</button>
-                <button type="submit" id="next_btn" onClick={()=>{pagechange('next')}}>다음</button>
+                <button type="submit" id="previous_btn" onClick={() => { handlePageChange('previous') }}>이전</button>
+                <button type="submit" id="next_btn" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>다음</button>
             </div>
         </div>
-    ); 
+    );
 };
 
 export default Test;

@@ -3,15 +3,24 @@ import { Link, Route, Switch, BrowserRouter as Router} from "react-router-dom";
 import Home from "./Home"
 import Intro from "./Intro"
 import Test from "./Test"
+import Outro from "./Outro"
+import Result from "./Result"
+import {UserContext} from "./UserContext"
 import "./style.css";
 
 export default function App() {
+  const [userInfo, setUserInfo] = useState({name:'',gender:''});
+  
   return (
     <Router>
       <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/intro" component={Intro} />
-          <Route path="/test" component={Test} />
+          <UserContext.Provider value={{userInfo, setUserInfo}}>
+            <Route exact path="/" component={Home} />
+            <Route path="/intro" component={Intro} />
+            <Route path="/test" component={Test} />
+            <Route path="/outro" component={Outro} />
+            <Route path="/result" component={Result} />
+          </UserContext.Provider>
       </Switch>
     </Router>
   );
