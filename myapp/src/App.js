@@ -5,15 +5,17 @@ import Intro from "./Intro"
 import Test from "./Test"
 import Outro from "./Outro"
 import Result from "./Result"
-import {UserContext} from "./UserContext"
+import {UserContext, SeqContext} from "./UseContext"
 import "./style.css";
 
 export default function App() {
   const [userInfo, setUserInfo] = useState({name:'',gender:''});
+  const [sequence, setSequence] = useState(1);
   
   return (
     <Router>
       <Switch>
+        <SeqContext.Provider value={{sequence, setSequence}}>
           <UserContext.Provider value={{userInfo, setUserInfo}}>
             <Route exact path="/" component={Home} />
             <Route path="/intro" component={Intro} />
@@ -21,6 +23,7 @@ export default function App() {
             <Route path="/outro" component={Outro} />
             <Route path="/result" component={Result} />
           </UserContext.Provider>
+        </SeqContext.Provider>
       </Switch>
     </Router>
   );

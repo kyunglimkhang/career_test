@@ -50,7 +50,7 @@ function Intro () {
             </div>
 
              <div>
-                 <Link to="/home">
+                 <Link to="/">
                      <button type="submit" id="previous_btn">이전</button>
                  </Link>
                 <Link to="/test">
