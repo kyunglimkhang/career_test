@@ -1,17 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState, useContext} from "react";
+import React, { useCallback, useEffect, useMemo, useState, useContext as useContext } from "react";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
-import {UserContext, SeqContext} from "./UseContext";
+import { UserContext } from "./UseContext";
 import API_KEY from './config';
 
 const Test = () => {
     var history = useHistory();
-    
-    const apiUrl = `http://www.career.go.kr/inspct/openapi/test/questions?apikey=`+API_KEY+`&q=6`;
+
+    const apiUrl = `http://www.career.go.kr/inspct/openapi/test/questions?apikey=` + API_KEY + `&q=6`;
     const postApiUrl = `http://www.career.go.kr/inspct/openapi/test/report`;
-    
-    const {userInfo, setUserInfo} = useContext(UserContext);
-    const {sequence, setSequence} = useContext(SeqContext);
+
+    const { userInfo, setUserInfo } = useContext(UserContext);
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [page, setPage] = useState(1);
@@ -32,20 +31,20 @@ const Test = () => {
         return dateToTimestamp;
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         timeStamp();
         console.log(timeStamp());
-    },[]);
+    }, []);
 
-    const postResult = useCallback(async() => {
-        
+    const postResult = useCallback(async () => {
+
         const answerForm = () => {
-            var answerdata = answers;
-            for (var i=0; i<answers.length; i++){
-                answerdata[i] = i+1 + '=' + answers[i];
+            var answerData = answers;
+            for (var i = 0; i < answers.length; i++) {
+                answerData[i] = i + 1 + '=' + answers[i];
             }
-            answerdata = answerdata.join(' ');
-            return answerdata;
+            answerData = answerData.join(' ');
+            return answerData;
         }
 
         const data = {
@@ -58,28 +57,28 @@ const Test = () => {
             "answers": answerForm()
         }
 
-        const response = await axios.post(postApiUrl, data, {headers: {'Content-Type': 'application/json'}});
+        const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
         console.log(response);
         const resultUrl = response.data.RESULT.url;
-        const seqFromUrl = resultUrl.split('?seq=')[1];
+        const seq = resultUrl.split('?seq=')[1];
         console.log(resultUrl);
-        console.log(seqFromUrl);
-        setSequence(seqFromUrl);
+        console.log(seq);
+        history.push('/outro/'+ seq);
     }, [postApiUrl, answers]);
 
     //페이지 전환
     const handlePageChange = (type) => {
-        var new_page = 0
+        var newPage = 0
         if (type == 'previous') {
-            new_page = page - 1;
-            if (new_page === 0) {
+            newPage = page - 1;
+            if (newPage === 0) {
                 history.push('/intro');
             } else {
                 setPage(page - 1);
             }
         } else {
-            new_page = page + 1;
-            if (new_page === parseInt(questions.length / 5) + 2) {
+            newPage = page + 1;
+            if (newPage === parseInt(questions.length / 5) + 2) {
                 postResult();
                 history.push('/outro');
             } else {
@@ -165,11 +164,6 @@ const Test = () => {
     useEffect(() => {
         fetchQuestions();
     }, [fetchQuestions]);
-
-    useEffect(() => {
-        console.log("here!!");
-        console.log(sequence);
-    }, [sequence]);
 
     return (
         <div>
