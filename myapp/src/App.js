@@ -5,8 +5,7 @@ import Intro from "./Intro"
 import Test from "./Test"
 import Outro from "./Outro"
 import Result from "./Result"
-import { UserContext } from "./UseContext"
-import "./style.css";
+import { UserContext } from "./UserContext"
 
 export default function App() {
   const [userInfo, setUserInfo] = useState({ name: '', gender: '' });

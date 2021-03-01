@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState, useContext as useContext } from "react";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
-import { UserContext } from "./UseContext";
+import { UserContext } from "./UserContext";
 import API_KEY from './config';
 
 const Test = () => {

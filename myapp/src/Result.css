@@ -1,0 +1,62 @@
+.result { 
+    width: 900px;
+    margin: auto;
+    text-align: center;
+}
+
+.charts {
+    width: 800px;
+    height: 600px;
+}
+
+.header {
+    margin-top: 100px;
+    text-align: center;
+    width: 900px;
+}
+
+.title{
+    padding-bottom: 20px;
+}
+
+.recharts-tooltip-wrapper {
+    width: 100px; 
+}
+
+.recharts-default-tooltip {
+    width: 170px;
+}
+
+.recharts-tooltip-label {
+    width: 150px; 
+}
+
+.recharts-tooltip-item {
+    width: 150px; 
+}
+
+.recharts-tooltip-item-list {
+    width: 150px;
+}
+
+.recharts-surface{
+    margin-left: 50px;
+}
+
+.category {
+    padding-bottom: 50px;
+    margin-top: 80px;
+}
+
+.job {
+    padding-bottom: 30px;
+    font-size: x-large;
+}
+
+.jobByMajor{
+    margin-bottom: 50PX;
+}
+
+.reset {
+    margin-bottom: 200PX;
+}

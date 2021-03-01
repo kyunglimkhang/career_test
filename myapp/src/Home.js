@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "./UseContext"
+import { UserContext } from "./UserContext"
 
 function Home() {
   const { userInfo, setUserInfo } = useContext(UserContext);
@@ -72,6 +72,7 @@ function Home() {
       <Link to="/intro">
         <button type="submit" id="start_btn" disabled={!name || !gender}>검사 시작</button>
       </Link>
+      
     </div>
   );
 }
