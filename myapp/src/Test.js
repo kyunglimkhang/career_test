@@ -41,12 +41,12 @@ const Test = () => {
         const answerForm = () => {
             var answerData = answers;
             for (var i = 0; i < answers.length; i++) {
-                answerData[i] = i + 1 + '=' + answers[i];
+                answerData[i] = "B" + (i + 1) + '=' + answers[i];
             }
             answerData = answerData.join(' ');
             return answerData;
         }
-
+        
         const data = {
             "apikey": API_KEY,
             "qestrnSeq": "6",
@@ -56,7 +56,7 @@ const Test = () => {
             "startDtm": timeStamp(),
             "answers": answerForm()
         }
-
+        console.log(data);
         const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
         console.log(response);
         const resultUrl = response.data.RESULT.url;
