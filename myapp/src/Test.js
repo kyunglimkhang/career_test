@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { UserContext } from "./UserContext";
 import API_KEY from './config';
+import { Progress } from 'reactstrap';
 
 const Test = () => {
     var history = useHistory();
@@ -15,6 +16,7 @@ const Test = () => {
     const [answers, setAnswers] = useState([]);
     const [page, setPage] = useState(1);
     const [questionResult, setQuestionResult] = useState([]);
+    const [progress, setProgress] = useState(null);
 
     const fetchQuestions = useCallback(async () => {
         const response = await axios.get(apiUrl);
@@ -69,7 +71,7 @@ const Test = () => {
     //페이지 전환
     const handlePageChange = (type) => {
         var newPage = 0
-        if (type == 'previous') {
+        if (type === 'previous') {
             newPage = page - 1;
             if (newPage === 0) {
                 history.push('/intro');
@@ -87,6 +89,15 @@ const Test = () => {
         }
     }
 
+    const buttonChange = () => {
+        if (page === 6) {
+            return "제출"
+        }
+        else {
+            return "다음"
+        }
+    }
+
     const isButtonDisabled = useMemo(() => {
         let isDisabled = false;
         questions.forEach((question) => {
@@ -99,6 +110,25 @@ const Test = () => {
         });
         return isDisabled;
     }, [answers, page]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const updateProgress = () => {
+        console.log(progress);
+        var progressValue = 0;
+        var increaseValue = (1/(answers.length)) * 100;
+
+        answers.map(answer => {
+            if (answer) {
+                progressValue += increaseValue;
+            } 
+        })
+
+        setProgress(Math.ceil(progressValue));
+    }
+
+    useEffect(() => {
+        updateProgress();
+    }, [updateProgress]);
 
     const showQuestionResult = () => {
         const new_questionResult = [];
@@ -164,15 +194,19 @@ const Test = () => {
     useEffect(() => {
         fetchQuestions();
     }, [fetchQuestions]);
-
+    
     return (
         <div>
+            <div>
+                <div className="text-center">{progress}%</div>
+                <Progress value={progress} />
+            </div>
             <div>
                 {questionResult}
             </div>
             <div>
                 <button type="submit" id="previous_btn" onClick={() => { handlePageChange('previous') }}>이전</button>
-                <button type="submit" id="next_btn" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>다음</button>
+                <button type="submit" id="next_btn" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>{buttonChange()}</button>
             </div>
         </div>
     );
