@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import React, { PureComponent, useCallback, useEffect, useMemo, useState, useContext, } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from 'axios';
 import API_KEY from './config';
 import { Table } from 'reactstrap';
@@ -30,7 +30,6 @@ function Result() {
             master: []
         };
 
-        console.log(response.data);
         response.data.map((data) => {
             if (data[2] === 2) {
                 jobByEducationData.highschool.push(data);
@@ -42,7 +41,6 @@ function Result() {
                 jobByEducationData.master.push(data);
             }
         })
-        console.log(jobByEducationData);
         setJobByEducation(jobByEducationData);
 
     }, [jobByEducationApiUrl]);
@@ -61,27 +59,20 @@ function Result() {
             medical: [],
             artsandphysical: []
         };
-        console.log(response.data);
+
         response.data.map((data) => {
-            if (data[2] === 0) {
-                jobByMajorData.irrelevent.push(data);
-            } else if (data[2] === 1) {
-                jobByMajorData.liberal.push(data);
-            } else if (data[2] === 2) {
-                jobByMajorData.social.push(data);
-            } else if (data[2] === 3) {
-                jobByMajorData.education.push(data);
-            } else if (data[2] === 4) {
-                jobByMajorData.engineering.push(data);
-            } else if (data[2] === 5) {
-                jobByMajorData.natural.push(data);
-            } else if (data[2] === 6) {
-                jobByMajorData.medical.push(data);
-            } else if (data[2] === 7) {
-                jobByMajorData.artsandphysical.push(data);
+            const majorNum = data[2];
+            var index = 0;
+            for (const [key, value] of Object.entries(jobByMajorData)) {
+                console.log(index);
+                if (majorNum == index) {
+                    console.log(value);
+                    Object.values(jobByMajorData)[index].push(data);
+                }
+                var index = index + 1;
             }
         })
-        console.log(jobByMajorData);
+
         setJobByMajor(jobByMajorData);
 
     }, [jobByMajorApiUrl]);
@@ -89,8 +80,6 @@ function Result() {
 
     const fetchResult = useCallback(async () => {
         const response = await axios.get(resultApiUrl);
-        console.log(response);
-        console.log(response.data.result);
 
         const userData = {};
         userData.name = response.data.inspct.nm;
@@ -104,7 +93,6 @@ function Result() {
 
         const testScore = response.data.result.wonScore.split(' ').map(score => score.split('=')[1]);
         testScore.pop();
-        console.log(testScore);
         setTestResult(testScore);
 
     }, [resultApiUrl]);
@@ -114,8 +102,6 @@ function Result() {
     }, [fetchResult]);
 
     useEffect(() => {
-        console.log(firstHighScoreNum);
-        console.log(secondHighScoreNum);
         if (firstHighScoreNum !== null) {
             fetchJobByEdu();
             fetchJobByMajor();
@@ -132,56 +118,84 @@ function Result() {
             setFirstHighScoreNum(firstHighScoreIndex + 1);
             // 두번째로 점수가 높은 항목 구하기
             var secondHighScoreValue = scoreList.sort()[scoreList.length - 2].toString();
-            console.log(secondHighScoreValue);
+            
             if (firstHighScoreValue === secondHighScoreValue) {
                 var secondHighScoreIndex = testResult.indexOf(firstHighScoreValue, firstHighScoreIndex + 1);
             } else {
                 var secondHighScoreIndex = testResult.indexOf(secondHighScoreValue);
             }
-            console.log(secondHighScoreIndex);
+            
             setSecondHighScoreNum(secondHighScoreIndex + 1);
         }
     }, [testResult])
 
     const setData = () => {
-        const data = [{
-            항목: '능력발휘',
-            항목점수: testResult[0]
-        },
-        {
-            항목: '자율성',
-            항목점수: testResult[1]
-        },
-        {
-            항목: '보수',
-            항목점수: testResult[2]
-        },
-        {
-            항목: '안정성',
-            항목점수: testResult[3]
-        },
-        {
-            항목: '사회적 인정',
-            항목점수: testResult[4]
-        },
-        {
-            항목: '사회봉사',
-            항목점수: testResult[5]
-        },
-        {
-            항목: '자기계발',
-            항목점수: testResult[6]
-        },
-        {
-            항목: '창의성',
-            항목점수: testResult[7]
-        }];
+        const categoryName = ["능력발휘", "자율성", "보수", "안정성", "사회적 인정", "사회봉사", "자기계발", "창의성"];
+        const data = [{ 항목: '능력발휘', 항목점수: testResult[0] }];
+        for (var i = 1; i < categoryName.length; i++) {
+            data.push({ 항목: categoryName[i], 항목점수: testResult[i] });
+        }
+        console.log(data);
         return data;
     };
 
     useEffect(() => {
         setData();
     }, [testResult]);
+
+    const showJobByEducation = () => {
+        const jobByEducationList = [];
+        var educationCategory = ["고졸", "전문대졸", "대졸", "대학원졸"];
+        var index = 0;
+        for (const [key, value] of Object.entries(jobByEducation)) {
+            var categoryName = educationCategory[index];
+            index = index + 1;
+            jobByEducationList.push(
+                <tr>
+                    <th>{categoryName}</th>
+                    <td>
+                        {value.map((job) => {
+                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
+                            return (
+                                <a href={jobLink} target='_blank'>
+                                    {job[1]}
+                                &nbsp;
+                                </a>
+                            );
+                        })}
+                    </td>
+                </tr>
+            );
+        }
+        return jobByEducationList;
+    }
+
+    const showJobByMajor = () => {
+        const jobByMajorList = [];
+        var majorCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
+        var index = 0;
+        for (const [key, value] of Object.entries(jobByMajor)) {
+            var categoryName = majorCategory[index];
+            index = index + 1;
+            jobByMajorList.push(
+                <tr>
+                    <th>{categoryName}</th>
+                    <td>
+                        {value.map((job) => {
+                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
+                            return (
+                                <a href={jobLink} target='_blank'>
+                                    {job[1]}
+                                &nbsp;
+                                </a>
+                            );
+                        })}
+                    </td>
+                </tr>
+            );
+        }
+        return jobByMajorList;
+    }
 
     return (
         <div class="result">
@@ -221,6 +235,7 @@ function Result() {
                     </div>
                 </div>
             </div>
+
             <div>
                 <h2 class="category">가치관과 관련이 높은 직업</h2>
                 <div>
@@ -230,194 +245,30 @@ function Result() {
                             <thead>
                                 <tr>
                                     <th>분야</th>
-                                    <td>직업</td>
+                                    <th>직업</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th>고졸</th>
-                                    <td>
-                                        {jobByEducation.highschool && jobByEducation.highschool.map((job) => {
-                                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                            return (
-                                                <a href={jobLink} target='_blank'>
-                                                    {job[1]}
-                                            &nbsp;
-                                                </a>
-                                            );
-                                        })}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>전문대졸</th>
-                                    <td>
-                                        {jobByEducation.college && jobByEducation.college.map((job) => {
-                                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                            return (
-                                                <a href={jobLink} target='_blank'>
-                                                    {job[1]}
-                                            &nbsp;
-                                                </a>
-                                            );
-                                        })}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>대졸</th>
-                                    <td>
-                                        {jobByEducation.university && jobByEducation.university.map((job) => {
-                                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                            return (
-                                                <a href={jobLink} target='_blank'>
-                                                    {job[1]}
-                                            &nbsp;
-                                                </a>
-                                            );
-                                        })}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>대학원졸</th>
-                                    <td>
-                                        {jobByEducation.master && jobByEducation.master.map((job) => {
-                                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                            return (
-                                                <a href={jobLink} target='_blank'>
-                                                    {job[1]}
-                                            &nbsp;
-                                                </a>
-                                            );
-                                        })}
-                                    </td>
-                                </tr>
+                                {showJobByEducation()}
                             </tbody>
                         </Table>
                     </div>
                 </div>
                 <div class="jobByMajor">
                     <div class="job">종사자 평균 전공별</div>
-                    <Table hover>
-                        <thead>
-                            <tr>
-                                <th>분야</th>
-                                <th>직업</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th>계열무관</th>
-                                <td>
-                                    {jobByMajor.irrelevent && jobByMajor.irrelevent.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>인문</th>
-                                <td>
-                                    {jobByMajor.liberal && jobByMajor.liberal.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>사회</th>
-                                <td>
-                                    {jobByMajor.social && jobByMajor.social.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>교육</th>
-                                <td>
-                                    {jobByMajor.education && jobByMajor.education.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>공학</th>
-                                <td>
-                                    {jobByMajor.engineering && jobByMajor.engineering.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>자연</th>
-                                <td>
-                                    {jobByMajor.natural && jobByMajor.natural.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>의학</th>
-                                <td>
-                                    {jobByMajor.medical && jobByMajor.medical.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>예체능</th>
-                                <td>
-                                    {jobByMajor.artsandphysical && jobByMajor.artsandphysical.map((job) => {
-                                        const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                                        return (
-                                            <a href={jobLink} target='_blank'>
-                                                {job[1]}
-                                            &nbsp;
-                                            </a>
-                                        );
-                                    })}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </Table>
+                    <div class="table">
+                        <Table hover>
+                            <thead>
+                                <tr>
+                                    <th>분야</th>
+                                    <th>직업</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {showJobByMajor()}
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
             <div class="reset">
