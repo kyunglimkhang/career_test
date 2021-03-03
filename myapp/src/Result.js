@@ -7,6 +7,7 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Resp
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./Result.css";
 
+
 function Result() {
     const { seq } = useParams();
     const [userInfo, setUserInfo] = useState([]);
@@ -50,7 +51,7 @@ function Result() {
         const response = await axios.get(jobByMajorApiUrl);
         console.log(response);
         const jobByMajorData = {
-            irrelevent: [],
+            irrelevant: [],
             liberal: [],
             social: [],
             education: [],
@@ -65,7 +66,7 @@ function Result() {
             var index = 0;
             for (const [key, value] of Object.entries(jobByMajorData)) {
                 console.log(index);
-                if (majorNum == index) {
+                if (majorNum === index) {
                     console.log(value);
                     Object.values(jobByMajorData)[index].push(data);
                 }
@@ -76,7 +77,6 @@ function Result() {
         setJobByMajor(jobByMajorData);
 
     }, [jobByMajorApiUrl]);
-
 
     const fetchResult = useCallback(async () => {
         const response = await axios.get(resultApiUrl);

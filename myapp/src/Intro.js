@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from 'axios';
+import { Progress } from 'reactstrap';
 
 function Intro() {
     const apiUrl = `http://www.career.go.kr/inspct/openapi/test/questions?apikey=32a2c9717c399817549cbb5169b959b7&q=6`;
@@ -20,6 +21,11 @@ function Intro() {
 
     return (
         <div>
+            <h1>검사 예시</h1>
+            <div>
+                <div className="text-center">0%</div>
+                <Progress value={0} />
+            </div>
             <div>
                 <h1>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h1>
             </div>
