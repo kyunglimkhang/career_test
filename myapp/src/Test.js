@@ -98,7 +98,6 @@ const Test = () => {
         }
     }
 
-
     const isButtonDisabled = useMemo(() => {
         let isDisabled = false;
         questions.forEach((question) => {
