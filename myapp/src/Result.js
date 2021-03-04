@@ -25,14 +25,17 @@ function Result() {
         console.log(jobByEducationApiUrl);
         const response = await axios.get(jobByEducationApiUrl);
         const jobByEducationData = {
+            middleschool: [],
             highschool: [],
             college: [],
             university: [],
             master: []
         };
-
+        console.log(response);
         response.data.map((data) => {
-            if (data[2] === 2) {
+            if (data[2] === 1) {
+                jobByEducationData.middleschool.push(data);
+            } else if (data[2] === 2) {
                 jobByEducationData.highschool.push(data);
             } else if (data[2] === 3) {
                 jobByEducationData.college.push(data);
@@ -145,7 +148,7 @@ function Result() {
 
     const showJobByEducation = () => {
         const jobByEducationList = [];
-        var educationCategory = ["고졸", "전문대졸", "대졸", "대학원졸"];
+        var educationCategory = ["중졸이하", "고졸", "전문대졸", "대졸", "대학원졸"];
         var index = 0;
         for (const [key, value] of Object.entries(jobByEducation)) {
             var categoryName = educationCategory[index];

@@ -109,7 +109,7 @@ const Test = () => {
             }
         });
         return isDisabled;
-    }, [answers, page]);
+    }, [answers, page, questions]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const updateProgress = () => {
@@ -198,7 +198,7 @@ const Test = () => {
     return (
         <div>
             <div>
-                <div className="text-center">{progress}%</div>
+                <div className="text-right">{progress}%</div>
                 <Progress value={progress} />
             </div>
             <div>
