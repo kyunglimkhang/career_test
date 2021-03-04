@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { UserContext } from "./UserContext";
 import API_KEY from './config';
-import { Progress } from 'reactstrap';
+import { Progress, Button } from 'reactstrap';
 
 const Test = () => {
     var history = useHistory();
@@ -205,8 +205,8 @@ const Test = () => {
                 {questionResult}
             </div>
             <div>
-                <button type="submit" id="previous_btn" onClick={() => { handlePageChange('previous') }}>이전</button>
-                <button type="submit" id="next_btn" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>{buttonChange()}</button>
+                <Button outline color="primary" onClick={() => { handlePageChange('previous') }}>이전</Button>
+                <Button outline color="primary" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>{buttonChange()}</Button>
             </div>
         </div>
     );

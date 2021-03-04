@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from 'axios';
-import { Progress } from 'reactstrap';
+import { Progress, Button } from 'reactstrap';
 
 function Intro() {
     const apiUrl = `http://www.career.go.kr/inspct/openapi/test/questions?apikey=32a2c9717c399817549cbb5169b959b7&q=6`;
@@ -23,7 +23,7 @@ function Intro() {
         <div>
             <h1>검사 예시</h1>
             <div>
-                <div className="text-center">0%</div>
+                <div className="text-right">0%</div>
                 <Progress value={0} />
             </div>
             <div>
@@ -57,10 +57,10 @@ function Intro() {
 
             <div>
                 <Link to="/">
-                    <button type="submit" id="previous_btn">이전</button>
+                    <Button outline color="primary">이전</Button>
                 </Link>
                 <Link to="/test">
-                    <button type="submit" id="next_btn" disabled={!sample_answer}>검사 시작</button>
+                    <Button outline color="primary" disabled={!sample_answer}>검사 시작</Button>
                 </Link>
             </div>
         </div>
