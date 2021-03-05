@@ -6,6 +6,7 @@ import Test from "./Test"
 import Outro from "./Outro"
 import Result from "./Result"
 import { UserContext } from "./UserContext"
+import './App.css'
 
 export default function App() {
   const [userInfo, setUserInfo] = useState({ name: '', gender: '' });

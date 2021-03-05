@@ -6,7 +6,7 @@ import API_KEY from './config';
 import { Progress, Button } from 'reactstrap';
 
 const Test = () => {
-    var history = useHistory();
+    const history = useHistory();
 
     const apiUrl = `http://www.career.go.kr/inspct/openapi/test/questions?apikey=` + API_KEY + `&q=6`;
     const postApiUrl = `http://www.career.go.kr/inspct/openapi/test/report`;
@@ -41,14 +41,14 @@ const Test = () => {
     const postResult = useCallback(async () => {
 
         const answerForm = () => {
-            var answerData = answers;
+            let answerData = answers;
             for (var i = 0; i < answers.length; i++) {
                 answerData[i] = "B" + (i + 1) + '=' + answers[i];
             }
             answerData = answerData.join(' ');
             return answerData;
         }
-        
+
         const data = {
             "apikey": API_KEY,
             "qestrnSeq": "6",
@@ -58,19 +58,16 @@ const Test = () => {
             "startDtm": timeStamp(),
             "answers": answerForm()
         }
-        console.log(data);
+
         const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
-        console.log(response);
         const resultUrl = response.data.RESULT.url;
         const seq = resultUrl.split('?seq=')[1];
-        console.log(resultUrl);
-        console.log(seq);
-        history.push('/outro/'+ seq);
+        history.push('/outro/' + seq);
     }, [postApiUrl, answers]);
 
     //페이지 전환
     const handlePageChange = (type) => {
-        var newPage = 0
+        let newPage = 0
         if (type === 'previous') {
             newPage = page - 1;
             if (newPage === 0) {
@@ -98,6 +95,18 @@ const Test = () => {
         }
     }
 
+    const pagination = () => {
+        const paginationGroup = [];
+        const lastPage = parseInt(answers.length / 5) +1; 
+        for (var i=0; i<lastPage; i++){
+            var pageIndex = i+1;
+            paginationGroup.push(
+                <li><a href="#">{pageIndex}</a></li>
+            );
+        }
+        return paginationGroup;
+    }
+
     const isButtonDisabled = useMemo(() => {
         let isDisabled = false;
         questions.forEach((question) => {
@@ -114,13 +123,13 @@ const Test = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const updateProgress = () => {
         console.log(progress);
-        var progressValue = 0;
-        var increaseValue = (1/(answers.length)) * 100;
+        let progressValue = 0;
+        let increaseValue = (1 / (answers.length)) * 100;
 
         answers.map(answer => {
             if (answer) {
                 progressValue += increaseValue;
-            } 
+            }
         })
 
         setProgress(Math.ceil(progressValue));
@@ -133,14 +142,14 @@ const Test = () => {
     const showQuestionResult = () => {
         const new_questionResult = [];
         for (var i = 0; i < questions.length; i++) {
-            var question_Num = parseInt(questions[i].qitemNo)
-            var question = questions[i].question
-            var answer01 = questions[i].answer01
-            var answer02 = questions[i].answer02
-            var answerScore01 = questions[i].answerScore01
-            var answerScore02 = questions[i].answerScore02
+            let question_Num = parseInt(questions[i].qitemNo)
+            let question = questions[i].question
+            let answer01 = questions[i].answer01
+            let answer02 = questions[i].answer02
+            let answerScore01 = questions[i].answerScore01
+            let answerScore02 = questions[i].answerScore02
 
-            var page_index = 1
+            let page_index = 1
 
             if (question_Num % 5 === 0) {
                 page_index = parseInt(question_Num / 5)
@@ -158,7 +167,7 @@ const Test = () => {
             }
 
             new_questionResult.push(
-                <div className={page_index + " question"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
+                <div className={"row" + page_index + " question"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
                     <h3>{question}</h3>
                     <div>
                         <label>
@@ -194,9 +203,9 @@ const Test = () => {
     useEffect(() => {
         fetchQuestions();
     }, [fetchQuestions]);
-    
+
     return (
-        <div>
+        <div className="container">
             <div>
                 <div className="text-right">{progress}%</div>
                 <Progress value={progress} />
@@ -204,9 +213,18 @@ const Test = () => {
             <div>
                 {questionResult}
             </div>
-            <div>
-                <Button outline color="primary" onClick={() => { handlePageChange('previous') }}>이전</Button>
-                <Button outline color="primary" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>{buttonChange()}</Button>
+            <div className="row">
+                <div className="col-md-4">
+                    <Button outline color="primary" onClick={() => { handlePageChange('previous') }}>이전</Button>
+                </div>
+                <nav className="col-md-4">
+                    <ul className="pagination">
+                        {pagination()}
+                    </ul>
+                </nav>
+                <div className="col-md-4">
+                    <Button outline color="primary" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>{buttonChange()}</Button>
+                </div>
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from 'axios';
 import API_KEY from './config';
-import { Table } from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./Result.css";
@@ -23,57 +23,13 @@ function Result() {
 
     const fetchJobByEdu = useCallback(async () => {
         const response = await axios.get(jobByEducationApiUrl);
-        const jobByEducationData = {
-            middleschool: [],
-            highschool: [],
-            college: [],
-            university: [],
-            master: []
-        };
-
-        response.data.map((data) => {
-            if (data[2] === 1) {
-                jobByEducationData.middleschool.push(data);
-            } else if (data[2] === 2) {
-                jobByEducationData.highschool.push(data);
-            } else if (data[2] === 3) {
-                jobByEducationData.college.push(data);
-            } else if (data[2] === 4) {
-                jobByEducationData.university.push(data);
-            } else if (data[2] === 5) {
-                jobByEducationData.master.push(data);
-            }
-        })
-        setJobByEducation(jobByEducationData);
+        setJobByEducation(response.data);
 
     }, [jobByEducationApiUrl]);
 
     const fetchJobByMajor = useCallback(async () => {
         const response = await axios.get(jobByMajorApiUrl);
-
-        const jobByMajorData = {
-            irrelevant: [],
-            liberal: [],
-            social: [],
-            education: [],
-            engineering: [],
-            natural: [],
-            medical: [],
-            artsandphysical: []
-        };
-
-        response.data.map((data) => {
-            const majorNum = data[2];
-            var index = 0;
-            for (const [key, value] of Object.entries(jobByMajorData)) {
-                if (majorNum === index) {
-                    Object.values(jobByMajorData)[index].push(data);
-                }
-                var index = index + 1;
-            }
-        })
-
-        setJobByMajor(jobByMajorData);
+        setJobByMajor(response.data);
 
     }, [jobByMajorApiUrl]);
 
@@ -111,19 +67,19 @@ function Result() {
     useEffect(() => {
         if (testResult.length !== 0) {
             // 가장 점수가 높은 항목 구하기
-            var scoreList = [...testResult];
-            var firstHighScoreValue = scoreList.sort()[scoreList.length - 1].toString();
-            var firstHighScoreIndex = testResult.indexOf(firstHighScoreValue);
+            let scoreList = [...testResult];
+            let firstHighScoreValue = scoreList.sort()[scoreList.length - 1].toString();
+            let firstHighScoreIndex = testResult.indexOf(firstHighScoreValue);
             setFirstHighScoreNum(firstHighScoreIndex + 1);
             // 두번째로 점수가 높은 항목 구하기
-            var secondHighScoreValue = scoreList.sort()[scoreList.length - 2].toString();
-            
+            let secondHighScoreValue = scoreList.sort()[scoreList.length - 2].toString();
+
             if (firstHighScoreValue === secondHighScoreValue) {
                 var secondHighScoreIndex = testResult.indexOf(firstHighScoreValue, firstHighScoreIndex + 1);
             } else {
                 var secondHighScoreIndex = testResult.indexOf(secondHighScoreValue);
             }
-            
+
             setSecondHighScoreNum(secondHighScoreIndex + 1);
         }
     }, [testResult])
@@ -142,24 +98,24 @@ function Result() {
     }, [testResult]);
 
     const showJobByEducation = () => {
-        const jobByEducationList = [];
-        var educationCategory = ["중졸이하", "고졸", "전문대졸", "대졸", "대학원졸"];
-        var index = 0;
-        for (const [key, value] of Object.entries(jobByEducation)) {
-            var categoryName = educationCategory[index];
-            index = index + 1;
+        const educationCategory = ["중졸이하", "고졸", "전문대졸", "대졸", "대학원졸"];
 
-            if (value.length !== 0) {
+        const jobByEducationList = [];
+
+        educationCategory.map((educationName, educationNum) => {
+            educationNum += 1;
+            const jobList = jobByEducation.filter(([, , categoryNum]) => categoryNum === educationNum);
+            if (jobList.length !== 0) {
                 jobByEducationList.push(
                     <tr>
-                        <th>{categoryName}</th>
+                        <th>{educationName}</th>
                         <td>
-                            {value.map((job) => {
-                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
+                            {jobList.map(([jobNum, jobName]) => {
+                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + jobNum;
                                 return (
                                     <a href={jobLink} target='_blank'>
-                                        {job[1]}
-                                    &nbsp;
+                                        {jobName}
+                                                &nbsp;
                                     </a>
                                 );
                             })}
@@ -167,28 +123,28 @@ function Result() {
                     </tr>
                 );
             }
-        }
+        })
         return jobByEducationList;
     }
 
     const showJobByMajor = () => {
         const jobByMajorList = [];
-        var majorCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
-        var index = 0;
-        for (const [key, value] of Object.entries(jobByMajor)) {
-            var categoryName = majorCategory[index];
-            index = index + 1;
-            if (value.length !== 0) {
+        const majorCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
+
+        majorCategory.map((majorName, majorNum) => {
+            majorNum += 1;
+            const jobList = jobByMajor.filter(([, , categoryNum]) => categoryNum === majorNum);
+            if (jobList.length !== 0) {
                 jobByMajorList.push(
                     <tr>
-                        <th>{categoryName}</th>
+                        <th>{majorName}</th>
                         <td>
-                            {value.map((job) => {
-                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
+                            {jobList.map(([jobNum, jobName]) => {
+                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + jobNum;
                                 return (
                                     <a href={jobLink} target='_blank'>
-                                        {job[1]}
-                                    &nbsp;
+                                        {jobName}
+                                                &nbsp;
                                     </a>
                                 );
                             })}
@@ -196,7 +152,7 @@ function Result() {
                     </tr>
                 );
             }
-        }
+        })
         return jobByMajorList;
     }
 
@@ -276,7 +232,7 @@ function Result() {
             </div>
             <div className="reset">
                 <Link to="/">
-                    <button type="submit">다시 검사하기</button>
+                    <Button outline color="primary">다시 검사하기</Button>
                 </Link>
             </div>
         </div>
