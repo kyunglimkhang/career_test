@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "./UserContext"
+import { UserContext } from "./UserContext";
+import { Button } from 'reactstrap';
 
 function Home() {
   const { userInfo, setUserInfo } = useContext(UserContext);
@@ -70,7 +71,7 @@ function Home() {
       </div>
 
       <Link to="/intro">
-        <button type="submit" id="start_btn" disabled={!name || !gender}>검사 시작</button>
+        <Button outline color="primary" size="lg" disabled={!name || !gender}>검사 시작</Button>
       </Link>
       
     </div>

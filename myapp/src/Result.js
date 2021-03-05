@@ -22,9 +22,9 @@ function Result() {
     const jobByMajorApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/majors?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
 
     const fetchJobByEdu = useCallback(async () => {
-        console.log(jobByEducationApiUrl);
         const response = await axios.get(jobByEducationApiUrl);
         const jobByEducationData = {
+            middleschool: [],
             highschool: [],
             college: [],
             university: [],
@@ -32,7 +32,9 @@ function Result() {
         };
 
         response.data.map((data) => {
-            if (data[2] === 2) {
+            if (data[2] === 1) {
+                jobByEducationData.middleschool.push(data);
+            } else if (data[2] === 2) {
                 jobByEducationData.highschool.push(data);
             } else if (data[2] === 3) {
                 jobByEducationData.college.push(data);
@@ -47,9 +49,8 @@ function Result() {
     }, [jobByEducationApiUrl]);
 
     const fetchJobByMajor = useCallback(async () => {
-        console.log(jobByMajorApiUrl);
         const response = await axios.get(jobByMajorApiUrl);
-        console.log(response);
+
         const jobByMajorData = {
             irrelevant: [],
             liberal: [],
@@ -65,9 +66,7 @@ function Result() {
             const majorNum = data[2];
             var index = 0;
             for (const [key, value] of Object.entries(jobByMajorData)) {
-                console.log(index);
                 if (majorNum === index) {
-                    console.log(value);
                     Object.values(jobByMajorData)[index].push(data);
                 }
                 var index = index + 1;
@@ -135,7 +134,6 @@ function Result() {
         for (var i = 1; i < categoryName.length; i++) {
             data.push({ 항목: categoryName[i], 항목점수: testResult[i] });
         }
-        console.log(data);
         return data;
     };
 
@@ -145,27 +143,30 @@ function Result() {
 
     const showJobByEducation = () => {
         const jobByEducationList = [];
-        var educationCategory = ["고졸", "전문대졸", "대졸", "대학원졸"];
+        var educationCategory = ["중졸이하", "고졸", "전문대졸", "대졸", "대학원졸"];
         var index = 0;
         for (const [key, value] of Object.entries(jobByEducation)) {
             var categoryName = educationCategory[index];
             index = index + 1;
-            jobByEducationList.push(
-                <tr>
-                    <th>{categoryName}</th>
-                    <td>
-                        {value.map((job) => {
-                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                            return (
-                                <a href={jobLink} target='_blank'>
-                                    {job[1]}
-                                &nbsp;
-                                </a>
-                            );
-                        })}
-                    </td>
-                </tr>
-            );
+
+            if (value.length !== 0) {
+                jobByEducationList.push(
+                    <tr>
+                        <th>{categoryName}</th>
+                        <td>
+                            {value.map((job) => {
+                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
+                                return (
+                                    <a href={jobLink} target='_blank'>
+                                        {job[1]}
+                                    &nbsp;
+                                    </a>
+                                );
+                            })}
+                        </td>
+                    </tr>
+                );
+            }
         }
         return jobByEducationList;
     }
@@ -177,31 +178,33 @@ function Result() {
         for (const [key, value] of Object.entries(jobByMajor)) {
             var categoryName = majorCategory[index];
             index = index + 1;
-            jobByMajorList.push(
-                <tr>
-                    <th>{categoryName}</th>
-                    <td>
-                        {value.map((job) => {
-                            const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
-                            return (
-                                <a href={jobLink} target='_blank'>
-                                    {job[1]}
-                                &nbsp;
-                                </a>
-                            );
-                        })}
-                    </td>
-                </tr>
-            );
+            if (value.length !== 0) {
+                jobByMajorList.push(
+                    <tr>
+                        <th>{categoryName}</th>
+                        <td>
+                            {value.map((job) => {
+                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + job[0];
+                                return (
+                                    <a href={jobLink} target='_blank'>
+                                        {job[1]}
+                                    &nbsp;
+                                    </a>
+                                );
+                            })}
+                        </td>
+                    </tr>
+                );
+            }
         }
         return jobByMajorList;
     }
 
     return (
-        <div class="result">
+        <div className="result">
             <div>
-                <div class="header">
-                    <h1 class="title">직업가치관검사 검사표</h1>
+                <div className="header">
+                    <h1 className="title">직업가치관검사 검사표</h1>
                     <p>직업가치관이란 직업을 선택할 때 영향을 끼치는 자신만의 믿음과 신념입니다. 따라서 여러분의 직업생활과 관련하여 포기하지 않는 무게중심의 역할을 한다고 볼 수 있습니다. 직업가치관검사는 여러분이 직업을 선택할 때 상대적으로 어떠한 가치를 중요하게 생각하는지를 알려줍니다. 또한 본인이 가장 중요하게 생각하는 가치를 충족시켜줄 수 있는 직업에 대해 생각해 볼 기회를 제공합니다.</p>
                 </div>
                 <Table>
@@ -222,8 +225,8 @@ function Result() {
                 </Table>
 
                 <div>
-                    <h2 class="category">직업가치관결과</h2>
-                    <div class="charts">
+                    <h2 className="category">직업가치관결과</h2>
+                    <div className="charts">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={setData()}>
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -237,10 +240,10 @@ function Result() {
             </div>
 
             <div>
-                <h2 class="category">가치관과 관련이 높은 직업</h2>
+                <h2 className="category">가치관과 관련이 높은 직업</h2>
                 <div>
-                    <div class="job">종사자 평균 학력별</div>
-                    <div class="table">
+                    <div className="job">종사자 평균 학력별</div>
+                    <div className="table">
                         <Table hover>
                             <thead>
                                 <tr>
@@ -254,9 +257,9 @@ function Result() {
                         </Table>
                     </div>
                 </div>
-                <div class="jobByMajor">
-                    <div class="job">종사자 평균 전공별</div>
-                    <div class="table">
+                <div className="jobByMajor">
+                    <div className="job">종사자 평균 전공별</div>
+                    <div className="table">
                         <Table hover>
                             <thead>
                                 <tr>
@@ -271,7 +274,7 @@ function Result() {
                     </div>
                 </div>
             </div>
-            <div class="reset">
+            <div className="reset">
                 <Link to="/">
                     <button type="submit">다시 검사하기</button>
                 </Link>
