@@ -20,7 +20,7 @@ function Intro() {
     console.log(sample_question);
 
     return (
-        <div>
+        <div className="container text-center">
             <h1>검사 예시</h1>
             <div>
                 <div className="text-right">0%</div>
