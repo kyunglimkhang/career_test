@@ -5,32 +5,33 @@ import { Form, FormGroup, Label, Input, FormFeedback, Button } from 'reactstrap'
 
 function Home() {
   const { userInfo, setUserInfo } = useContext(UserContext);
-  const [name, setName] = useState("")
-  const [gender, setGender] = useState("")
   const [invalidMessage, setInvalidMessage] = useState("")
 
   function handleNameChange(e) {
     console.log(e.target.value);
     const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/;
     if (regex.test(e.target.value)) {
-      setName(e.target.value);
-      setInvalidMessage("");
       setUserInfo((prevState) => ({
         ...prevState,
         name: e.target.value
       }));
+      setInvalidMessage("");
     } else if (e.target.value === '') {
-      setName("");
+      setUserInfo((prevState) => ({
+        ...prevState,
+        name: ""
+      }));
       setInvalidMessage("이름은 필수값입니다. 이름을 입력해주세요.");
     } else {
-      setName("");
+      setUserInfo((prevState) => ({
+        ...prevState,
+        name: ""
+      }));
       setInvalidMessage("이름은 한글과 영어만 가능합니다. 이름을 바르게 입력해주세요.")
     }
   }
 
   function handleGenderChange(e) {
-    const selected_val = e.target.value;
-    setGender(selected_val);
     setUserInfo((prevState) => ({
       ...prevState,
       gender: e.target.value
@@ -38,48 +39,49 @@ function Home() {
   }
 
   return (
-    <div className="container text-center">
-      <h1>직업 가치관 검사</h1>
-      <Form>
+    <div className="containAll container">
+      <h1 className="display-4" style={{'margin-bottom': '50px'}}>직업 가치관 검사</h1>
+      <Form className="container" style={{'width':'200px', 'margin-bottom': '20px'}}>
         <FormGroup>
-          <Label>
-            이름
+          <Label className="font-weight-bold">
+            <h3>이름</h3>
           </Label>
           <Input
-            className={invalidMessage ? "is-invalid " : name ? "is-valid" : ""}
+            className={invalidMessage ? "is-invalid " : userInfo.name ? "is-valid" : ""}
             type="text"
             name="name"
             onBlur={handleNameChange}
-            style={{width:'200px'}}
             ></Input>
           <FormFeedback>{invalidMessage}</FormFeedback>
         </FormGroup>
       </Form>
 
-      <div>
+      <div style={{'margin-bottom': '30px'}}>
         <label>
-          <p>성별</p>
+        <h3>성별</h3>
         </label>
 
-            <div>
-              <label>
+            <div className="d-flex justify-content-center">
+              <label className={"pickFirst"}>
                 <input
                   type="radio"
                   name="gender"
                   id="male"
                   value="100323"
                   onChange={handleGenderChange}
+                  className={"radio"}
                 />
                 남성
               </label>
 
-              <label>
+              <label className={"pickSecond"}>
                 <input
                   type="radio"
                   name="gender"
                   id="female"
                   value="100324"
                   onChange={handleGenderChange}
+                  className={"radio"}
                 />
                 여성
               </label>
@@ -87,7 +89,7 @@ function Home() {
       </div>
 
           <Link to="/intro">
-            <Button outline color="primary" size="lg" disabled={!name || !gender}>검사 시작</Button>
+            <Button outline color="primary" size="lg" disabled={!userInfo.name || !userInfo.gender}>검사 시작</Button>
           </Link>
 
     </div>

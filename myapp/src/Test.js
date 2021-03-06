@@ -95,13 +95,18 @@ const Test = () => {
         }
     }
 
+    //pagination
+    const handlePagination = (e) => {
+        setPage(parseInt(e.target.value));
+    }
+
     const pagination = () => {
         const paginationGroup = [];
-        const lastPage = parseInt(answers.length / 5) +1; 
+        const lastPage = parseInt(answers.filter((answer) => answer !== undefined).length/5) + 1;
         for (var i=0; i<lastPage; i++){
             var pageIndex = i+1;
             paginationGroup.push(
-                <li><a href="#">{pageIndex}</a></li>
+                <li><Button value={pageIndex} onClick={(e)=>{handlePagination(e)}}>{pageIndex}</Button></li>
             );
         }
         return paginationGroup;
@@ -122,7 +127,6 @@ const Test = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const updateProgress = () => {
-        console.log(progress);
         let progressValue = 0;
         let increaseValue = (1 / (answers.length)) * 100;
 
@@ -167,25 +171,27 @@ const Test = () => {
             }
 
             new_questionResult.push(
-                <div className={"row" + page_index + " question"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
-                    <h3>{question}</h3>
-                    <div>
-                        <label>
+                <div className={"row" + page_index +" containQuestion"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
+                    <h3 className={"question"}>{question}</h3>
+                    <div className={"pickAnswer"}>
+                        <label className={"pickFirst"}>
                             <input
                                 type="radio"
                                 name={`answers${question_Num - 1}`}
                                 value={answerScore01}
                                 onChange={handleAnswerChange}
+                                className={"radio"}
                             />
                             {answer01}
                         </label>
 
-                        <label>
+                        <label className={"pickSecond"}>
                             <input
                                 type="radio"
                                 name={`answers${question_Num - 1}`}
                                 value={answerScore02}
                                 onChange={handleAnswerChange}
+                                className={"radio"}
                             />
                             {answer02}
                         </label>
@@ -205,24 +211,25 @@ const Test = () => {
     }, [fetchQuestions]);
 
     return (
-        <div className="container">
-            <div>
-                <div className="text-right">{progress}%</div>
-                <Progress value={progress} />
+        <div className="containAll container">
+            <div className="testHeader">
+                <h2>검사 진행</h2>
+                <div className="text-right"><h2>{progress}%</h2></div>
             </div>
-            <div>
+                <Progress value={progress} />
+            <div className="questionDiv">
                 {questionResult}
             </div>
-            <div className="row">
-                <div className="col-md-4">
+            <div className="buttonDiv">
+                <div className="directButton">
                     <Button outline color="primary" onClick={() => { handlePageChange('previous') }}>이전</Button>
                 </div>
-                <nav className="col-md-4">
+                <nav >
                     <ul className="pagination">
                         {pagination()}
                     </ul>
                 </nav>
-                <div className="col-md-4">
+                <div className="directButton">
                     <Button outline color="primary" onClick={() => { handlePageChange('next') }} disabled={isButtonDisabled}>{buttonChange()}</Button>
                 </div>
             </div>
