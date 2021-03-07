@@ -6,7 +6,7 @@ function Outro() {
     const { seq } = useParams();
 
     return (
-        <div className="container text-center">
+        <div className="containAll container">
             <h1>검사가 완료되었습니다.</h1>
             <p>
                 검사결과는 여러분이 직업을 선택할 때 상대적으로 어떠한 가치를 중요하게 생각하는지를 알려주고,

@@ -20,44 +20,46 @@ function Intro() {
     console.log(sample_question);
 
     return (
-        <div className="container text-center">
-            <h1>검사 예시</h1>
-            <div>
-                <div className="text-right">0%</div>
-                <Progress value={0} />
+        <div className="containAll container">
+            <div className="testHeader">
+                <h2>검사 예시</h2>
+                <div className="text-right"><h2>0%</h2></div>
             </div>
-            <div>
-                <h1>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h1>
+            <Progress value={0} />
+            <div style={{'margin-top':'15px'}}>
+                <h2>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h2>
             </div>
+            <div className="questionDiv">
+                <div className="containQuestion container" >
+                    <h3 className={"question"}>{sample_question.question}</h3>
+                    <div className={"pickAnswer"}>
+                        <label className={"pickFirst"}>
+                            <input
+                                type="radio"
+                                name="sample_question"
+                                onChange={() => {
+                                    setSample_answer("answer01")
+                                }}
+                                className={"radio"}
+                            />
+                            {sample_question.answer01}
+                        </label>
 
-            <div>
-                <h3>{sample_question.question}</h3>
-                <div>
-                    <label>
-                        <input
-                            type="radio"
-                            name="sample_question"
-                            onChange={() => {
-                                setSample_answer("answer01")
-                            }}
-                        />
-                        {sample_question.answer01}
-                    </label>
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="sample_question"
-                            onChange={() => { setSample_answer("answer02") }}
-                        />
-                        {sample_question.answer02}
-                    </label>
+                        <label className={"pickSecond"}>
+                            <input
+                                type="radio"
+                                name="sample_question"
+                                onChange={() => { setSample_answer("answer02") }}
+                                className={"radio"}
+                            />
+                            {sample_question.answer02}
+                        </label>
+                    </div>
                 </div>
             </div>
-
-            <div>
+            <div className="buttonDiv">
                 <Link to="/">
-                    <Button outline color="primary">이전</Button>
+                    <Button outline className="directButton" color="primary" >이전</Button>
                 </Link>
                 <Link to="/test">
                     <Button outline color="primary" disabled={!sample_answer}>검사 시작</Button>

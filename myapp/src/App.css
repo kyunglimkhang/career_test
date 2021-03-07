@@ -3,6 +3,61 @@
 * {
   font-family: 'Noto Sans KR', sans-serif;
 }
+
+.containAll {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.questionDiv {
+  margin-bottom: 20px;
+  margin-top: 5px;
+}
+
+.containQuestion {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-color: #343a40;
+  border-radius: .25rem;
+  margin-top: 15px;
+}
+
+.testHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.question {
+  color:blue;
+}
+
+.pickAnswer {
+
+}
+
+.pickFirst {
+  margin-right: 10px;
+}
+
+.pickSecond {
+  margin-left: 10px;
+}
+
+.radio {
+  margin-right: 10px;
+}
+
+.buttonDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
+.directButton {
+  margin-right: 15px;
+  margin-left: 15px;
+}
 /* .App {
   text-align: center;
 }

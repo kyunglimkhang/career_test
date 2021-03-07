@@ -16,21 +16,23 @@ function Result() {
     const [secondHighScoreNum, setSecondHighScoreNum] = useState(null);
     const [jobByEducation, setJobByEducation] = useState([]);
     const [jobByMajor, setJobByMajor] = useState([]);
+    const [filter, setFilter] = useState([]);
 
     const resultApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/report?seq=` + seq;
     const jobByEducationApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
     const jobByMajorApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/majors?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
+    const jobInfoApiUrl = `https://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=32a2c9717c399817549cbb5169b959b7&svcType=api&svcCode=JOB&contentType=json&gubun=job_dic_list&searchJobNm=`;
 
     const fetchJobByEdu = useCallback(async () => {
         const response = await axios.get(jobByEducationApiUrl);
-        setJobByEducation(response.data);
+        setJobByEducation(response.data, () => {
 
+        });
     }, [jobByEducationApiUrl]);
 
     const fetchJobByMajor = useCallback(async () => {
         const response = await axios.get(jobByMajorApiUrl);
         setJobByMajor(response.data);
-
     }, [jobByMajorApiUrl]);
 
     const fetchResult = useCallback(async () => {
@@ -52,6 +54,51 @@ function Result() {
 
     }, [resultApiUrl]);
 
+    const fetchJobInfo = useCallback(async (JobType) => {
+        console.log('fetchinfo');
+        console.log(JobType);
+        if (JobType === "jobByEducation") {
+            var jobList = jobByEducation;
+        } else {
+            var jobList = jobByMajor;
+        }
+        var jobListWithInfo = [];
+        await Promise.all(jobList.map(async (job) => {
+            var searchWord = job[1];
+            if (job[1].search(/\s/)) {
+                searchWord = job[1].split(' ')[0];
+            }
+
+            const jobSearchApiUrl = jobInfoApiUrl + searchWord;
+            const response = await axios.get(jobSearchApiUrl);
+            const searchResult = response.data.dataSearch.content;
+
+            const jobInfo = [];
+            searchResult.map((result) => {
+                if (result.jobdicSeq === job[0].toString()) {
+                    jobInfo.push(result.salery);
+                    jobInfo.push(result.prospect);
+                    jobInfo.push(result.possibility);
+                    jobInfo.push(result.equalemployment);
+                }
+            });
+
+            const jobWithInfo = job.concat(jobInfo);
+            jobListWithInfo.push(jobWithInfo);
+        }))
+
+        if (jobListWithInfo.length !== 0) {
+            if (JobType === "jobByEducation") {
+                console.log("education!");
+                setJobByEducation(jobListWithInfo);
+            } else {
+                console.log("major!");
+                setJobByMajor(jobListWithInfo);
+            }
+        }
+
+    }, [jobByEducation, jobByMajor, jobInfoApiUrl])
+
     useEffect(() => {
         fetchResult();
     }, [fetchResult]);
@@ -61,18 +108,27 @@ function Result() {
             fetchJobByEdu();
             fetchJobByMajor();
         }
-    }, [fetchJobByEdu, fetchJobByMajor]);
+    }, [fetchJobByEdu, fetchJobByMajor, firstHighScoreNum]);
 
+    useEffect(() => {
+        if (jobByEducation.length !== 0) {
+            console.log(jobByEducation[0].length);
+            if (jobByEducation[0].length !== 7) {
+                fetchJobInfo("jobByEducation");
+                fetchJobInfo("jobByMajor");
+            }
+        }
+    }, [jobByEducation, jobByMajor]);
 
     useEffect(() => {
         if (testResult.length !== 0) {
             // 가장 점수가 높은 항목 구하기
-            let scoreList = [...testResult];
-            let firstHighScoreValue = scoreList.sort()[scoreList.length - 1].toString();
-            let firstHighScoreIndex = testResult.indexOf(firstHighScoreValue);
+            const scoreList = [...testResult];
+            const firstHighScoreValue = scoreList.sort()[scoreList.length - 1].toString();
+            const firstHighScoreIndex = testResult.indexOf(firstHighScoreValue);
             setFirstHighScoreNum(firstHighScoreIndex + 1);
             // 두번째로 점수가 높은 항목 구하기
-            let secondHighScoreValue = scoreList.sort()[scoreList.length - 2].toString();
+            const secondHighScoreValue = scoreList.sort()[scoreList.length - 2].toString();
 
             if (firstHighScoreValue === secondHighScoreValue) {
                 var secondHighScoreIndex = testResult.indexOf(firstHighScoreValue, firstHighScoreIndex + 1);
@@ -98,8 +154,8 @@ function Result() {
     }, [testResult]);
 
     const showJobByEducation = () => {
+        console.log(jobByEducation);
         const educationCategory = ["중졸이하", "고졸", "전문대졸", "대졸", "대학원졸"];
-
         const jobByEducationList = [];
 
         educationCategory.map((educationName, educationNum) => {
@@ -128,13 +184,14 @@ function Result() {
     }
 
     const showJobByMajor = () => {
+        console.log(jobByMajor);
         const jobByMajorList = [];
         const majorCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
 
         majorCategory.map((majorName, majorNum) => {
             majorNum += 1;
             const jobList = jobByMajor.filter(([, , categoryNum]) => categoryNum === majorNum);
-            if (jobList.length !== 0) {
+            if (filter.length === 0 && jobList.length !== 0) {
                 jobByMajorList.push(
                     <tr>
                         <th>{majorName}</th>
@@ -151,13 +208,84 @@ function Result() {
                         </td>
                     </tr>
                 );
+            } else if (filter.length !== 0) {
+                // const filterCategory = ["보통미만", "보통이상", "좋음", "매우좋음"];
+                console.log("filter!!!start!!");
+                console.log(filter);
+                const filterList = jobList.filter(([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobpossibility, jobequality]) => jobprospect === filter);
+                jobByMajorList.push(
+                    <tr>
+                        <th>{majorName}</th>
+                        <td>
+                            {filterList.map(([jobNum, jobName]) => {
+                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + jobNum;
+                                return (
+                                    <a href={jobLink} target='_blank'>
+                                        {jobName}
+                                                &nbsp;
+                                    </a>
+                                );
+                            })}
+                        </td>
+                    </tr>
+                );
             }
         })
         return jobByMajorList;
     }
 
+    const handleFilter = (e) => {
+        console.log(e.target.value);
+
+        // setFilter((current) => {
+        //     console.log(current);
+        //     current[2] = "보통미만";
+        //     console.log(current);
+        //     const newFilter = [...current];
+        //     console.log(newFilter);
+        //     return newFilter;
+        // });
+    }
+
+    const filterButtonGroup = () => {
+        const filterName = ['평균 연봉', '일자리 전망', '발전 가능성', '고용 평등'];
+        const salaryGrade = ['2000만원 미만', '2000만원 이상', '3000만원 이상', '4000만원 이상'];
+        const filterGrade = ['보통미만', '보통이상', '좋음', '매우좋음'];
+        const filterGroup = [];
+        filterName.map((name) => {
+            var gradeList = [];
+            if (name === '평균 연봉') {
+                salaryGrade.map((grade) => {
+                    gradeList.push(
+                        <li><a value={grade} onClick={(e)=>{handleFilter(e)}}>{grade}</a></li>
+                    );
+                });
+            } else {
+                filterGrade.map((grade) => {
+                    gradeList.push(
+                        <li><a value={grade} onClick={(e)=>{handleFilter(e)}}>{grade}</a></li>
+                    );
+                });
+            }
+
+            filterGroup.push(
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        {name} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        {gradeList}
+                        <li class="divider"></li>
+                        <li><a value="all" onClick={(e)=>{handleFilter(e)}}>전체 보기</a></li>
+                    </ul>
+                </div>
+            );
+        });
+        return filterGroup
+    }
+
     return (
-        <div className="result">
+        <div className="result containAll container">
             <div>
                 <div className="header">
                     <h1 className="title">직업가치관검사 검사표</h1>
@@ -194,9 +322,11 @@ function Result() {
                     </div>
                 </div>
             </div>
-
             <div>
                 <h2 className="category">가치관과 관련이 높은 직업</h2>
+                <div>
+                    {filterButtonGroup()}
+                </div>
                 <div>
                     <div className="job">종사자 평균 학력별</div>
                     <div className="table">
