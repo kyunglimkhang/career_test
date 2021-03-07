@@ -4,9 +4,7 @@ import axios from 'axios';
 import API_KEY from './config';
 import { Table, Button } from 'reactstrap';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "./Result.css";
-
 
 function Result() {
     const { seq } = useParams();
@@ -16,7 +14,12 @@ function Result() {
     const [secondHighScoreNum, setSecondHighScoreNum] = useState(null);
     const [jobByEducation, setJobByEducation] = useState([]);
     const [jobByMajor, setJobByMajor] = useState([]);
-    const [filter, setFilter] = useState([]);
+    const [filter, setFilter] = useState({
+        salary: "",
+        prospect: "",
+        improvement: "",
+        equality: ""
+    });
 
     const resultApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/report?seq=` + seq;
     const jobByEducationApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
@@ -153,25 +156,40 @@ function Result() {
         setData();
     }, [testResult]);
 
-    const showJobByEducation = () => {
+    const showJobByEducation = useCallback(() => {
         console.log(jobByEducation);
-        const educationCategory = ["중졸이하", "고졸", "전문대졸", "대졸", "대학원졸"];
         const jobByEducationList = [];
-
+        const educationCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
         educationCategory.map((educationName, educationNum) => {
             educationNum += 1;
             const jobList = jobByEducation.filter(([, , categoryNum]) => categoryNum === educationNum);
+            console.log(jobList);
+            console.log(filter);
             if (jobList.length !== 0) {
                 jobByEducationList.push(
                     <tr>
                         <th>{educationName}</th>
                         <td>
-                            {jobList.map(([jobNum, jobName]) => {
+                            {jobList.map(([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobimprovement, jobequality]) => {
+                                console.log([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobimprovement, jobequality]);
+                                if (filter.salary && jobsalary !== filter.salary) {
+                                    return false
+                                }
+                                if (filter.prospect && jobprospect !== filter.prospect) {
+                                    return false
+                                }
+                                if (filter.improvement && jobimprovement !== filter.improvement) {
+                                    return false
+                                }
+                                if (filter.equality && jobequality !== filter.equality) {
+                                    return false
+                                }
+
                                 const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + jobNum;
                                 return (
                                     <a href={jobLink} target='_blank'>
                                         {jobName}
-                                                &nbsp;
+                                                    &nbsp;
                                     </a>
                                 );
                             })}
@@ -180,49 +198,43 @@ function Result() {
                 );
             }
         })
-        return jobByEducationList;
-    }
-
-    const showJobByMajor = () => {
+        return jobByEducationList
+    }, [filter.equality, filter.improvement, filter.prospect, filter.salary, jobByEducation])
+    
+    const showJobByMajor = useCallback(() => {
         console.log(jobByMajor);
         const jobByMajorList = [];
         const majorCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
-
         majorCategory.map((majorName, majorNum) => {
             majorNum += 1;
             const jobList = jobByMajor.filter(([, , categoryNum]) => categoryNum === majorNum);
-            if (filter.length === 0 && jobList.length !== 0) {
+            console.log(jobList);
+            console.log(filter);
+            if (jobList.length !== 0) {
                 jobByMajorList.push(
                     <tr>
                         <th>{majorName}</th>
                         <td>
-                            {jobList.map(([jobNum, jobName]) => {
+                            {jobList.map(([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobimprovement, jobequality]) => {
+                                console.log([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobimprovement, jobequality]);
+                                if (filter.salary && jobsalary !== filter.salary) {
+                                    return false
+                                }
+                                if (filter.prospect && jobprospect !== filter.prospect) {
+                                    return false
+                                }
+                                if (filter.improvement && jobimprovement !== filter.improvement) {
+                                    return false
+                                }
+                                if (filter.equality && jobequality !== filter.equality) {
+                                    return false
+                                }
+
                                 const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + jobNum;
                                 return (
                                     <a href={jobLink} target='_blank'>
                                         {jobName}
-                                                &nbsp;
-                                    </a>
-                                );
-                            })}
-                        </td>
-                    </tr>
-                );
-            } else if (filter.length !== 0) {
-                // const filterCategory = ["보통미만", "보통이상", "좋음", "매우좋음"];
-                console.log("filter!!!start!!");
-                console.log(filter);
-                const filterList = jobList.filter(([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobpossibility, jobequality]) => jobprospect === filter);
-                jobByMajorList.push(
-                    <tr>
-                        <th>{majorName}</th>
-                        <td>
-                            {filterList.map(([jobNum, jobName]) => {
-                                const jobLink = 'https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=' + jobNum;
-                                return (
-                                    <a href={jobLink} target='_blank'>
-                                        {jobName}
-                                                &nbsp;
+                                                    &nbsp;
                                     </a>
                                 );
                             })}
@@ -231,39 +243,43 @@ function Result() {
                 );
             }
         })
-        return jobByMajorList;
-    }
+        return jobByMajorList
+    }, [filter.equality, filter.improvement, filter.prospect, filter.salary, jobByMajor])
 
     const handleFilter = (e) => {
-        console.log(e.target.value);
-
-        // setFilter((current) => {
-        //     console.log(current);
-        //     current[2] = "보통미만";
-        //     console.log(current);
-        //     const newFilter = [...current];
-        //     console.log(newFilter);
-        //     return newFilter;
-        // });
+        Object.entries(filter).map(([key, value]) => {
+            if (key === e.target.name) {
+                filter[key] = e.target.value;
+            }
+        });
+        console.log(typeof(filter.salary));
+        setFilter((prevState) => ({
+            ...prevState,
+            salary: filter.salary,
+            prospect: filter.prospect,
+            improvement: filter.improvement,
+            equality: filter.equality
+        }));
     }
 
     const filterButtonGroup = () => {
-        const filterName = ['평균 연봉', '일자리 전망', '발전 가능성', '고용 평등'];
-        const salaryGrade = ['2000만원 미만', '2000만원 이상', '3000만원 이상', '4000만원 이상'];
+        const filterTitle = ['평균 연봉', '일자리 전망', '발전 가능성', '고용 평등'];
+        const filterName = ['salary', 'prospect', 'improvement', 'equality']
+        const salaryGrade = ['2000 만원 미만', '2000 만원 이상', '3000 만원 이상', '4000 만원 이상'];
         const filterGrade = ['보통미만', '보통이상', '좋음', '매우좋음'];
         const filterGroup = [];
-        filterName.map((name) => {
+        filterTitle.map((name, index) => {
             var gradeList = [];
             if (name === '평균 연봉') {
                 salaryGrade.map((grade) => {
                     gradeList.push(
-                        <li><a value={grade} onClick={(e)=>{handleFilter(e)}}>{grade}</a></li>
+                        <li><button value={grade} name={filterName[index]} onClick={(e) => { handleFilter(e) }}>{grade}</button></li>
                     );
                 });
             } else {
                 filterGrade.map((grade) => {
                     gradeList.push(
-                        <li><a value={grade} onClick={(e)=>{handleFilter(e)}}>{grade}</a></li>
+                        <li><button value={grade} name={filterName[index]} onClick={(e) => { handleFilter(e) }}>{grade}</button></li>
                     );
                 });
             }
@@ -276,7 +292,7 @@ function Result() {
                     <ul class="dropdown-menu" role="menu">
                         {gradeList}
                         <li class="divider"></li>
-                        <li><a value="all" onClick={(e)=>{handleFilter(e)}}>전체 보기</a></li>
+                        <li><button value="" name={filterName[index]} onClick={(e) => { handleFilter(e) }}>전체 보기</button></li>
                     </ul>
                 </div>
             );
