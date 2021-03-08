@@ -106,7 +106,7 @@ const Test = () => {
         for (var i=0; i<lastPage; i++){
             var pageIndex = i+1;
             paginationGroup.push(
-                <li><Button value={pageIndex} onClick={(e)=>{handlePagination(e)}}>{pageIndex}</Button></li>
+                <li><Button outline color="primary" value={pageIndex} onClick={(e)=>{handlePagination(e)}}>{pageIndex}</Button></li>
             );
         }
         return paginationGroup;
@@ -171,7 +171,7 @@ const Test = () => {
             }
 
             new_questionResult.push(
-                <div className={"row" + page_index +" containQuestion"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
+                <div className={"row" + page_index +" contain-question"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
                     <h3 className={"question"}>{question}</h3>
                     <div className={"pickAnswer"}>
                         <label className={"pickFirst"}>

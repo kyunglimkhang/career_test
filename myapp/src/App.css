@@ -11,32 +11,6 @@
   text-align: center;
 }
 
-.questionDiv {
-  margin-bottom: 20px;
-  margin-top: 5px;
-}
-
-.containQuestion {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-color: #343a40;
-  border-radius: .25rem;
-  margin-top: 15px;
-}
-
-.testHeader {
-  display: flex;
-  justify-content: space-between;
-}
-
-.question {
-  color:blue;
-}
-
-.pickAnswer {
-
-}
-
 .pickFirst {
   margin-right: 10px;
 }
@@ -46,7 +20,48 @@
 }
 
 .radio {
-  margin-right: 10px;
+  margin-right: 5px;
+}
+
+.big-title {
+  font-size: 3.5rem;
+  margin-bottom: 50px;
+}
+/* Home */
+a .big-button {
+  padding-left: 100px;
+  padding-right: 100px;
+  font-weight: bold;
+}
+
+.contain-name input {
+  text-align: center;
+}
+/* test */
+.questionDiv {
+  margin-bottom: 20px;
+  margin-top: 5px;
+}
+
+.contain-question {
+  border: 1.5px solid #f8f9fa;
+  border-color: #ced6e0;
+  border-radius: .25rem;
+  margin-top: 15px;
+  padding: 15px;
+}
+
+.testHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.question {
+  color:black;
+}
+
+.pickAnswer {
+
 }
 
 .buttonDiv {
@@ -54,10 +69,13 @@
   justify-content: space-between;
 }
 
-.directButton {
-  margin-right: 15px;
-  margin-left: 15px;
-}
+
+/* 
+li .btn-secondary {
+  background-color: #fff;
+  color: #007bff;
+  border-color: #007bff;
+} */
 /* .App {
   text-align: center;
 }

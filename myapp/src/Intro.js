@@ -26,11 +26,11 @@ function Intro() {
                 <div className="text-right"><h2>0%</h2></div>
             </div>
             <Progress value={0} />
-            <div style={{'margin-top':'15px'}}>
+            <div style={{'margin-top':'15px', 'textAlign':'start'}}>
                 <h2>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h2>
             </div>
             <div className="questionDiv">
-                <div className="containQuestion container" >
+                <div className="contain-question container" >
                     <h3 className={"question"}>{sample_question.question}</h3>
                     <div className={"pickAnswer"}>
                         <label className={"pickFirst"}>
