@@ -7,6 +7,8 @@ function Home() {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const [invalidMessage, setInvalidMessage] = useState("")
 
+  console.log(userInfo.name);
+  console.log(userInfo.gender);
   function handleNameChange(e) {
     console.log(e.target.value);
     const regex = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/;

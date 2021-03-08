@@ -32,6 +32,8 @@ a .big-button {
   padding-left: 100px;
   padding-right: 100px;
   font-weight: bold;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .contain-name input {

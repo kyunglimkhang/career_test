@@ -1,14 +1,16 @@
 import { Link, useParams } from "react-router-dom";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useContext } from "react";
+import { UserContext } from "./UserContext";
 import axios from 'axios';
 import API_KEY from './config';
 import { Table, Button } from 'reactstrap';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./Result.css";
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 function Result() {
     const { seq } = useParams();
-    const [userInfo, setUserInfo] = useState([]);
+    const { userInfo, setUserInfo } = useContext(UserContext);
     const [testResult, setTestResult] = useState([]);
     const [firstHighScoreNum, setFirstHighScoreNum] = useState(null);
     const [secondHighScoreNum, setSecondHighScoreNum] = useState(null);
@@ -30,6 +32,8 @@ function Result() {
     const jobByEducationApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
     const jobByMajorApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/majors?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
     const jobInfoApiUrl = `https://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=32a2c9717c399817549cbb5169b959b7&svcType=api&svcCode=JOB&contentType=json&gubun=job_dic_list&searchJobNm=`;
+    const currentUrl = window.location.href;
+    console.log(currentUrl);
 
     const fetchJobByEdu = useCallback(async () => {
         console.log("fetchJobByEdu!!!");
@@ -122,7 +126,7 @@ function Result() {
     useEffect(() => {
         if (jobByEducation.length !== 0) {
             console.log(jobByEducation[0].length);
-            if (jobByEducation[0].length !== 7) {
+            if (jobByEducation[0].length < 7) {
                 fetchJobInfo("jobByEducation");
                 fetchJobInfo("jobByMajor");
             }
@@ -173,45 +177,45 @@ function Result() {
             const jobequalityIndex = parseInt(filterGrade.indexOf(jobequality));
 
             if (filter.salary && parseInt(filter.salary) === 0) {
-                if (jobsalaryIndex !== parseInt(filter.salary)){
+                if (jobsalaryIndex !== parseInt(filter.salary)) {
                     return false
                 }
             }
             if (filter.salary && parseInt(filter.salary) > 0) {
-                if (jobsalaryIndex < parseInt(filter.salary)){
+                if (jobsalaryIndex < parseInt(filter.salary)) {
                     return false
                 }
             }
-            
+
             if (filter.prospect && parseInt(filter.prospect) === 0) {
-                if (jobprospectIndex !== parseInt(filter.prospect)){
+                if (jobprospectIndex !== parseInt(filter.prospect)) {
                     return false
                 }
             }
             if (filter.prospect && parseInt(filter.prospect) > 0) {
-                if (jobprospectIndex < parseInt(filter.prospect)){
+                if (jobprospectIndex < parseInt(filter.prospect)) {
                     return false
                 }
             }
 
             if (filter.improvement && parseInt(filter.improvement) === 0) {
-                if (jobimprovementIndex !== parseInt(filter.improvement)){
+                if (jobimprovementIndex !== parseInt(filter.improvement)) {
                     return false
                 }
             }
             if (filter.improvement && parseInt(filter.improvement) > 0) {
-                if (jobimprovementIndex < parseInt(filter.improvement)){
+                if (jobimprovementIndex < parseInt(filter.improvement)) {
                     return false
                 }
             }
 
             if (filter.equality && parseInt(filter.equality) === 0) {
-                if (jobequalityIndex !== parseInt(filter.equality)){
+                if (jobequalityIndex !== parseInt(filter.equality)) {
                     return false
                 }
             }
             if (filter.equality && parseInt(filter.equality) > 0) {
-                if (jobequalityIndex < parseInt(filter.equality)){
+                if (jobequalityIndex < parseInt(filter.equality)) {
                     return false
                 }
             }
@@ -228,7 +232,7 @@ function Result() {
     }
 
     const showJobByEducation = () => {
-        if (jobByEducation.length === 0){
+        if (jobByEducation.length === 0) {
             return false
         }
         console.log("showJobByEducation!!");
@@ -255,7 +259,7 @@ function Result() {
     }
 
     const showJobByMajor = () => {
-        if (jobByMajor.length === 0){
+        if (jobByMajor.length === 0) {
             return false
         }
         console.log("showJobByMajor!!");
@@ -280,7 +284,7 @@ function Result() {
         })
         return jobByMajorList
     }
-    
+
     const handleFilter = (e) => {
         Object.entries(filter).map(([key, value]) => {
             if (key === e.target.name) {
@@ -339,11 +343,11 @@ function Result() {
         Object.entries(filter).map(([filterName, gradeIndex], index) => {
             if (filterName === "salary") {
                 fileterNow.push(
-                    <div className="filter-now"><h6 style={{'fontWeight':'bold'}}>{filterTitle[index]}:</h6>&nbsp;<h6>{salaryGrade[gradeIndex]}</h6></div>
+                    <div className="filter-now"><h6 style={{ 'fontWeight': 'bold' }}>{filterTitle[index]}:</h6>&nbsp;<h6>{salaryGrade[gradeIndex]}</h6></div>
                 );
             } else {
                 fileterNow.push(
-                    <div className="filter-now"><h6 style={{'fontWeight':'bold'}}>{filterTitle[index]}:</h6>&nbsp;<h6>{filterGrade[gradeIndex]}</h6></div>
+                    <div className="filter-now"><h6 style={{ 'fontWeight': 'bold' }}>{filterTitle[index]}:</h6>&nbsp;<h6>{filterGrade[gradeIndex]}</h6></div>
                 );
             }
         });
@@ -399,7 +403,7 @@ function Result() {
                     {filterButtonGroup()}
                 </div>
                 <div className="container">
-                    <h4 style={{"margin-bottom":"20px"}}>적용된 필터</h4>
+                    <h4 style={{ "margin-bottom": "20px" }}>적용된 필터</h4>
                     {filterNowGroup()}
                 </div>
                 <div className="contain-job-table container">
@@ -437,8 +441,11 @@ function Result() {
             </div>
             <div className="contain-reset container">
                 <Link to="/">
-                    <Button outline color="primary" className="big-button">다시 검사하기</Button>
+                    <Button outline color="primary" className="big-button" onClick={() => setUserInfo({ name: '', gender: '' })}>다시 검사하기</Button>
                 </Link>
+                <CopyToClipboard text={currentUrl}>
+                    <Button outline color="primary" className="big-button" onClick={()=>{alert("copied!!")}}>URL 복사</Button>
+                </CopyToClipboard>
             </div>
         </div>
     );

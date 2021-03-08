@@ -62,13 +62,6 @@
     min-width: 115px;
     height: 40px;
     margin-right: 12px;
-/* 
-    border: 1px solid #dee2e6;
-    border-color: #6ca2db;
-    border-radius: .50rem; */
-
-    /* font-size: 10px; */
-    /* width: auto; */
     text-align: center;
     align-items: center;
 }
@@ -96,40 +89,3 @@ tbody td {
 .contain-reset {
     margin-bottom: 200PX;
 }
-
-/* .result { 
-    width: 900px;
-    margin: auto;
-    text-align: center;
-}
-
-.header {
-    margin-top: 100px;
-    text-align: center;
-    width: 900px;
-}
-
-.title{
-    padding-bottom: 20px;
-}
-
-
-.category {
-    padding-bottom: 50px;
-    margin-top: 80px;
-}
-
-.job {
-    padding-bottom: 30px;
-    font-size: x-large;
-}
-
-.jobByMajor{
-    margin-bottom: 50PX;
-}
-
-.reset {
-    margin-bottom: 200PX;
-}
- */
-
