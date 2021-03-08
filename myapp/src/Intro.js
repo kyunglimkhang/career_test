@@ -5,19 +5,17 @@ import { Progress, Button } from 'reactstrap';
 
 function Intro() {
     const apiUrl = `http://www.career.go.kr/inspct/openapi/test/questions?apikey=32a2c9717c399817549cbb5169b959b7&q=6`;
-    const [sample_question, setSample_question] = useState([]);
-    const [sample_answer, setSample_answer] = useState('');
+    const [sampleQuestion, setSampleQuestion] = useState([]);
+    const [sampleAnswer, setSampleAnswer] = useState('');
 
-    const fetchQuestions = useCallback(async () => {
+    const fetchSampleQuestion = useCallback(async () => {
         const response = await axios.get(apiUrl);
-        setSample_question(response.data.RESULT[0]);
+        setSampleQuestion(response.data.RESULT[0]);
     }, [apiUrl]);
 
     useEffect(() => {
-        fetchQuestions();
-    }, [fetchQuestions]);
-
-    console.log(sample_question);
+        fetchSampleQuestion();
+    }, [fetchSampleQuestion]);
 
     return (
         <div className="containAll container">
@@ -26,43 +24,43 @@ function Intro() {
                 <div className="text-right"><h2>0%</h2></div>
             </div>
             <Progress value={0} />
-            <div style={{'margin-top':'15px', 'textAlign':'start'}}>
+            <div style={{ 'margin-top': '15px', 'textAlign': 'start' }}>
                 <h2>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h2>
             </div>
             <div className="questionDiv">
                 <div className="contain-question container" >
-                    <h3 className={"question"}>{sample_question.question}</h3>
+                    <h3 className={"question"}>{sampleQuestion.question}</h3>
                     <div className={"pickAnswer"}>
                         <label className={"pickFirst"}>
                             <input
                                 type="radio"
                                 name="sample_question"
                                 onChange={() => {
-                                    setSample_answer("answer01")
+                                    setSampleAnswer("answer01")
                                 }}
                                 className={"radio"}
                             />
-                            {sample_question.answer01}
+                            {sampleQuestion.answer01}
                         </label>
 
                         <label className={"pickSecond"}>
                             <input
                                 type="radio"
                                 name="sample_question"
-                                onChange={() => { setSample_answer("answer02") }}
+                                onChange={() => { setSampleAnswer("answer02") }}
                                 className={"radio"}
                             />
-                            {sample_question.answer02}
+                            {sampleQuestion.answer02}
                         </label>
                     </div>
                 </div>
             </div>
             <div className="buttonDiv">
                 <Link to="/">
-                    <Button outline className="directButton" color="primary" >이전</Button>
+                    <Button outline className="directButton" color="primary">이전</Button>
                 </Link>
                 <Link to="/test">
-                    <Button outline color="primary" disabled={!sample_answer}>검사 시작</Button>
+                    <Button outline color="primary" disabled={!sampleAnswer}>검사 시작</Button>
                 </Link>
             </div>
         </div>
