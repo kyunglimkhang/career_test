@@ -40,8 +40,8 @@ function Home() {
 
   return (
     <div className="containAll container">
-      <h1 className="display-4" style={{'margin-bottom': '50px'}}>직업 가치관 검사</h1>
-      <Form className="container" style={{'width':'200px', 'margin-bottom': '20px'}}>
+      <h1 className="big-title">직업 가치관 검사</h1>
+      <Form className="contain-name container" style={{ 'width': '200px', 'margin-bottom': '20px' }}>
         <FormGroup>
           <Label className="font-weight-bold">
             <h3>이름</h3>
@@ -51,47 +51,45 @@ function Home() {
             type="text"
             name="name"
             onBlur={handleNameChange}
-            ></Input>
+          ></Input>
           <FormFeedback>{invalidMessage}</FormFeedback>
         </FormGroup>
       </Form>
 
-      <div style={{'margin-bottom': '30px'}}>
+      <div style={{ 'margin-bottom': '30px' }}>
         <label>
-        <h3>성별</h3>
+          <h3>성별</h3>
         </label>
 
-            <div className="d-flex justify-content-center">
-              <label className={"pickFirst"}>
-                <input
-                  type="radio"
-                  name="gender"
-                  id="male"
-                  value="100323"
-                  onChange={handleGenderChange}
-                  className={"radio"}
-                />
+        <div className="d-flex justify-content-center">
+          <label className={"pickFirst"}>
+            <input
+              type="radio"
+              name="gender"
+              id="male"
+              value="100323"
+              onChange={handleGenderChange}
+              className={"radio"}
+            />
                 남성
               </label>
 
-              <label className={"pickSecond"}>
-                <input
-                  type="radio"
-                  name="gender"
-                  id="female"
-                  value="100324"
-                  onChange={handleGenderChange}
-                  className={"radio"}
-                />
+          <label className={"pickSecond"}>
+            <input
+              type="radio"
+              name="gender"
+              id="female"
+              value="100324"
+              onChange={handleGenderChange}
+              className={"radio"}
+            />
                 여성
               </label>
-            </div>
+        </div>
       </div>
-
-          <Link to="/intro">
-            <Button outline color="primary" size="lg" disabled={!userInfo.name || !userInfo.gender}>검사 시작</Button>
-          </Link>
-
+      <Link to="/intro">
+        <Button outline color="primary" size="lg" className="big-button" disabled={!userInfo.name || !userInfo.gender}>검사 시작</Button>
+      </Link>
     </div>
   );
 }

@@ -1,12 +1,106 @@
-.result { 
+.result-medium-title{
+    margin-bottom: 50px;
+    font-weight: bold;
+}
+
+.category-div {
+    border: 1px solid #dee2e6;
+    border-color: #ced6e0;
+    border-radius: .25rem;
+    padding: 30px;
+}
+
+/* header */
+.description {
+    text-align: start;
+}
+/* userinfo */
+.container {
+    margin-top: 50px;
+}
+
+.userinfo td {
+    text-align: center;
+}
+/* charts */
+
+.charts {
+    height: 600px;
+}
+
+/* jobs */
+.job-category {
+    margin-bottom: 50px;
+}
+
+/* filter */
+.contain-filter {
+    border: 1.5px solid #dee2e6;
+    border-color: #007bff;
+    border-radius: .25rem;
+}
+
+.contain-filter .dropdown-menu {
+    text-align: center;
+}
+.btn-default {
+    margin-right: 10px;
+}
+
+.filter-value-btn {
+    width: 140px;
+    margin-bottom: 2px;
+}
+.div-filter-now {
+    margin-bottom: 10px;
+
+}
+
+.filter-now {
+    display: inline-flex;
+    vertical-align: middle;
+    min-width: 115px;
+    height: 40px;
+    margin-right: 12px;
+/* 
+    border: 1px solid #dee2e6;
+    border-color: #6ca2db;
+    border-radius: .50rem; */
+
+    /* font-size: 10px; */
+    /* width: auto; */
+    text-align: center;
+    align-items: center;
+}
+
+/* table */
+.contain-job-table {
+    border: 1px solid #dee2e6;
+    border-color: #ced6e0;
+    border-radius: .25rem;
+    padding: 30px;
+}
+thead th {
+    width: 100px;
+}
+
+tbody td {
+    text-align: start;
+}
+
+.table-job-col {
+    text-align: start;
+}
+
+/* contain-reset */
+.contain-reset {
+    margin-bottom: 200PX;
+}
+
+/* .result { 
     width: 900px;
     margin: auto;
     text-align: center;
-}
-
-.charts {
-    width: 800px;
-    height: 600px;
 }
 
 .header {
@@ -19,29 +113,6 @@
     padding-bottom: 20px;
 }
 
-.recharts-tooltip-wrapper {
-    width: 100px; 
-}
-
-.recharts-default-tooltip {
-    width: 170px;
-}
-
-.recharts-tooltip-label {
-    width: 150px; 
-}
-
-.recharts-tooltip-item {
-    width: 150px; 
-}
-
-.recharts-tooltip-item-list {
-    width: 150px;
-}
-
-.recharts-surface{
-    margin-left: 50px;
-}
 
 .category {
     padding-bottom: 50px;
@@ -60,3 +131,5 @@
 .reset {
     margin-bottom: 200PX;
 }
+ */
+

@@ -7,6 +7,7 @@ import Outro from "./Outro"
 import Result from "./Result"
 import { UserContext } from "./UserContext"
 import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
 export default function App() {
