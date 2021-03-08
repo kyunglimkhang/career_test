@@ -29,13 +29,11 @@ const Test = () => {
     const timeStamp = () => {
         const date = new Date();
         const dateToTimestamp = date.getTime();
-        console.log(dateToTimestamp);
         return dateToTimestamp;
     }
 
     useEffect(() => {
         timeStamp();
-        console.log(timeStamp());
     }, []);
 
     const postResult = useCallback(async () => {
@@ -102,11 +100,11 @@ const Test = () => {
 
     const pagination = () => {
         const paginationGroup = [];
-        const lastPage = parseInt(answers.filter((answer) => answer !== undefined).length/5) + 1;
-        for (var i=0; i<lastPage; i++){
-            var pageIndex = i+1;
+        const lastPage = parseInt(answers.filter((answer) => answer !== undefined).length / 5) + 1;
+        for (var i = 0; i < lastPage; i++) {
+            var pageIndex = i + 1;
             paginationGroup.push(
-                <li><Button outline color="primary" value={pageIndex} onClick={(e)=>{handlePagination(e)}}>{pageIndex}</Button></li>
+                <li><Button outline color="primary" value={pageIndex} onClick={(e) => { handlePagination(e) }}>{pageIndex}</Button></li>
             );
         }
         return paginationGroup;
@@ -115,9 +113,9 @@ const Test = () => {
     const isButtonDisabled = useMemo(() => {
         let isDisabled = false;
         questions.forEach((question) => {
-            const question_Num = parseInt(question.qitemNo, 10);
-            if (Math.ceil(question_Num / 5) === page) {
-                if (!answers[question_Num - 1]) {
+            const questionNum = parseInt(question.qitemNo, 10);
+            if (Math.ceil(questionNum / 5) === page) {
+                if (!answers[questionNum - 1]) {
                     isDisabled = true;
                 }
             }
@@ -144,40 +142,41 @@ const Test = () => {
     }, [updateProgress]);
 
     const showQuestionResult = () => {
-        const new_questionResult = [];
-        for (var i = 0; i < questions.length; i++) {
-            let question_Num = parseInt(questions[i].qitemNo)
-            let question = questions[i].question
-            let answer01 = questions[i].answer01
-            let answer02 = questions[i].answer02
-            let answerScore01 = questions[i].answerScore01
-            let answerScore02 = questions[i].answerScore02
+        const newQuestionResult = [];
+        console.log(questions);
+        questions.map((item) => {
+            let questionNum = parseInt(item.qitemNo)
+            let question = item.question
+            let answer01 = item.answer01
+            let answer02 = item.answer02
+            let answerScore01 = item.answerScore01
+            let answerScore02 = item.answerScore02
 
-            let page_index = 1
+            let pageIndex = 1
 
-            if (question_Num % 5 === 0) {
-                page_index = parseInt(question_Num / 5)
+            if (questionNum % 5 === 0) {
+                pageIndex = parseInt(questionNum / 5)
             } else {
-                page_index = parseInt(question_Num / 5) + 1
+                pageIndex = parseInt(questionNum / 5) + 1
             }
 
             const handleAnswerChange = (e) => {
                 setAnswers((current) => {
-                    const question_index = e.target.name.split('answers')[1];
+                    const questionIndex = e.target.name.split('answers')[1];
                     const newAnswers = [...current];
-                    newAnswers[question_index] = e.target.value;
+                    newAnswers[questionIndex] = e.target.value;
                     return newAnswers;
                 });
             }
 
-            new_questionResult.push(
-                <div className={"row" + page_index +" contain-question"} key={question_Num} style={{ display: (page_index === page) ? "block" : "none" }}>
+            newQuestionResult.push(
+                <div className={"row" + pageIndex + " contain-question"} key={questionNum} style={{ display: (pageIndex === page) ? "block" : "none" }}>
                     <h3 className={"question"}>{question}</h3>
                     <div className={"pickAnswer"}>
                         <label className={"pickFirst"}>
                             <input
                                 type="radio"
-                                name={`answers${question_Num - 1}`}
+                                name={`answers${questionNum - 1}`}
                                 value={answerScore01}
                                 onChange={handleAnswerChange}
                                 className={"radio"}
@@ -188,7 +187,7 @@ const Test = () => {
                         <label className={"pickSecond"}>
                             <input
                                 type="radio"
-                                name={`answers${question_Num - 1}`}
+                                name={`answers${questionNum - 1}`}
                                 value={answerScore02}
                                 onChange={handleAnswerChange}
                                 className={"radio"}
@@ -198,8 +197,8 @@ const Test = () => {
                     </div>
                 </div>
             )
-        }
-        setQuestionResult(new_questionResult);
+        });
+        setQuestionResult(newQuestionResult);
     }
 
     useEffect(() => {
@@ -216,7 +215,7 @@ const Test = () => {
                 <h2>검사 진행</h2>
                 <div className="text-right"><h2>{progress}%</h2></div>
             </div>
-                <Progress value={progress} />
+            <Progress value={progress} />
             <div className="questionDiv">
                 {questionResult}
             </div>
