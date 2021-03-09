@@ -4,6 +4,13 @@
 ## 배포
 Microsoft Azure에 배포했습니다. (Nginx 연동)
 
+## 실행
+```
+cd myapp
+npm install
+npm start
+```
+
 ## 폴더 구조
 
 - myapp : 리액트 폴더
