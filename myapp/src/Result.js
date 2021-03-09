@@ -6,7 +6,7 @@ import API_KEY from './config';
 import { Table, Button } from 'reactstrap';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./Result.css";
-import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 function Result() {
     const { seq } = useParams();
