@@ -16,39 +16,35 @@ function Result() {
     const [secondHighScoreNum, setSecondHighScoreNum] = useState(null);
     const [jobByEducation, setJobByEducation] = useState([]);
     const [jobByMajor, setJobByMajor] = useState([]);
+
     const [filter, setFilter] = useState({
         salary: "",
         prospect: "",
         improvement: "",
         equality: ""
     });
-
-    const filterTitle = ['평균 연봉', '일자리 전망', '발전 가능성', '고용 평등'];
-    const salaryGrade = ['2000 만원 미만', '2000 만원 이상', '3000 만원 이상', '4000 만원 이상'];
     const filterName = ['salary', 'prospect', 'improvement', 'equality']
+    const filterTitle = ['평균 연봉', '일자리 전망', '발전 가능성', '고용 평등'];
     const filterGrade = ['보통미만', '보통이상', '좋음이상', '매우좋음'];
+    const salaryGrade = ['2000 만원 미만', '2000 만원 이상', '3000 만원 이상', '4000 만원 이상'];
 
     const resultApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/report?seq=` + seq;
     const jobByEducationApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
     const jobByMajorApiUrl = `https://inspct.career.go.kr/inspct/api/psycho/value/majors?no1=${firstHighScoreNum}&no2=${secondHighScoreNum}`;
     const jobInfoApiUrl = `https://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=32a2c9717c399817549cbb5169b959b7&svcType=api&svcCode=JOB&contentType=json&gubun=job_dic_list&searchJobNm=`;
     const currentUrl = window.location.href;
-    console.log(currentUrl);
 
     const fetchJobByEdu = useCallback(async () => {
-        console.log("fetchJobByEdu!!!");
         const response = await axios.get(jobByEducationApiUrl);
         setJobByEducation(response.data);
     }, [jobByEducationApiUrl]);
 
     const fetchJobByMajor = useCallback(async () => {
-        console.log("fetchJobByMajor!!");
         const response = await axios.get(jobByMajorApiUrl);
         setJobByMajor(response.data);
     }, [jobByMajorApiUrl]);
 
     const fetchResult = useCallback(async () => {
-        console.log("fetchResult!!!");
         const response = await axios.get(resultApiUrl);
 
         const userData = {};
@@ -65,11 +61,9 @@ function Result() {
         testScore.pop();
         setTestResult(testScore);
 
-    }, [resultApiUrl]);
+    }, [resultApiUrl, setUserInfo]);
 
     const fetchJobInfo = useCallback(async (JobType) => {
-        console.log("fetchJobInfo!!");
-        console.log(JobType);
         if (JobType === "jobByEducation") {
             var jobList = jobByEducation;
         } else {
@@ -102,10 +96,8 @@ function Result() {
 
         if (jobListWithInfo.length !== 0) {
             if (JobType === "jobByEducation") {
-                console.log("education!");
                 setJobByEducation(jobListWithInfo);
             } else {
-                console.log("major!");
                 setJobByMajor(jobListWithInfo);
             }
         }
@@ -125,7 +117,6 @@ function Result() {
 
     useEffect(() => {
         if (jobByEducation.length !== 0) {
-            console.log(jobByEducation[0].length);
             if (jobByEducation[0].length < 7) {
                 fetchJobInfo("jobByEducation");
                 fetchJobInfo("jobByMajor");
@@ -134,7 +125,6 @@ function Result() {
     }, [fetchJobInfo, jobByEducation, jobByMajor]);
 
     useEffect(() => {
-        console.log("findNums!!!");
         if (testResult.length !== 0) {
             // 가장 점수가 높은 항목 구하기
             const scoreList = [...testResult];
@@ -155,11 +145,13 @@ function Result() {
     }, [testResult])
 
     const setData = () => {
-        const categoryName = ["능력발휘", "자율성", "보수", "안정성", "사회적 인정", "사회봉사", "자기계발", "창의성"];
-        const data = [{ 항목: '능력발휘', 항목점수: testResult[0] }];
-        for (var i = 1; i < categoryName.length; i++) {
-            data.push({ 항목: categoryName[i], 항목점수: testResult[i] });
-        }
+        const resultCategoryName = ["능력발휘", "자율성", "보수", "안정성", "사회적 인정", "사회봉사", "자기계발", "창의성"];
+        const data = [];
+        resultCategoryName.map((categoryName, index) => {
+            data.push(
+                { 항목: categoryName, 항목점수: testResult[index] }
+            );
+        })
         return data;
     };
 
@@ -170,11 +162,10 @@ function Result() {
     const showJobList = (jobList) => {
         const jobListResult = [];
         jobList.map(([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobimprovement, jobequality]) => {
-            console.log([jobNum, jobName, jobcategoryNum, jobsalary, jobprospect, jobimprovement, jobequality]);
             const jobsalaryIndex = parseInt(salaryGrade.indexOf(jobsalary));
-            const jobprospectIndex = parseInt(filterGrade.indexOf(jobprospect));
-            const jobimprovementIndex = parseInt(filterGrade.indexOf(jobimprovement));
-            const jobequalityIndex = parseInt(filterGrade.indexOf(jobequality));
+            const jobprospectIndex = parseInt(filterGrade.indexOf((jobprospect==="좋음") ? "좋음이상" : jobprospect));
+            const jobimprovementIndex = parseInt(filterGrade.indexOf((jobimprovement==="좋음") ? "좋음이상" : jobimprovement));
+            const jobequalityIndex = parseInt(filterGrade.indexOf((jobequality==="좋음") ? "좋음이상" : jobequality));
 
             if (filter.salary && parseInt(filter.salary) === 0) {
                 if (jobsalaryIndex !== parseInt(filter.salary)) {
@@ -235,15 +226,11 @@ function Result() {
         if (jobByEducation.length === 0) {
             return false
         }
-        console.log("showJobByEducation!!");
-        console.log(jobByEducation);
         const jobByEducationList = [];
-        const educationCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
+        const educationCategory = ["중졸", "고졸", "전문대졸", "대졸", "대학원졸"];
         educationCategory.map((educationName, educationNum) => {
             educationNum += 1;
             const jobList = jobByEducation.filter(([, , categoryNum]) => categoryNum === educationNum);
-            console.log(jobList);
-            console.log(filter);
             if (jobList.length !== 0) {
                 jobByEducationList.push(
                     <tr>
@@ -262,15 +249,11 @@ function Result() {
         if (jobByMajor.length === 0) {
             return false
         }
-        console.log("showJobByMajor!!");
-        console.log(jobByMajor);
         const jobByMajorList = [];
         const majorCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
         majorCategory.map((majorName, majorNum) => {
             majorNum += 1;
             const jobList = jobByMajor.filter(([, , categoryNum]) => categoryNum === majorNum);
-            console.log(jobList);
-            console.log(filter);
             if (jobList.length !== 0) {
                 jobByMajorList.push(
                     <tr>
@@ -286,12 +269,11 @@ function Result() {
     }
 
     const handleFilter = (e) => {
-        Object.entries(filter).map(([key, value]) => {
-            if (key === e.target.name) {
-                filter[key] = e.target.value;
+        Object.entries(filter).map(([filterName, filterValue]) => {
+            if (filterName === e.target.name) {
+                filter[filterName] = e.target.value;
             }
         });
-        console.log(typeof (filter.salary));
         setFilter((prevState) => ({
             ...prevState,
             salary: filter.salary,
@@ -303,10 +285,9 @@ function Result() {
 
     const filterButtonGroup = () => {
         const filterGroup = [];
-        const fileterNow = [];
 
         filterTitle.map((name, index) => {
-            var gradeList = [];
+            const gradeList = [];
             if (name === '평균 연봉') {
                 salaryGrade.map((grade, gradeIndex) => {
                     gradeList.push(
@@ -444,7 +425,7 @@ function Result() {
                     <Button outline color="primary" className="big-button" onClick={() => setUserInfo({ name: '', gender: '' })}>다시 검사하기</Button>
                 </Link>
                 <CopyToClipboard text={currentUrl}>
-                    <Button outline color="primary" className="big-button" onClick={()=>{alert("copied!!")}}>URL 복사</Button>
+                    <Button outline color="primary" className="big-button" onClick={() => { alert("copied!!") }}>URL 복사</Button>
                 </CopyToClipboard>
             </div>
         </div>
