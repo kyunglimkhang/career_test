@@ -227,7 +227,7 @@ function Result() {
             return false
         }
         const jobByEducationList = [];
-        const educationCategory = ["계열무관", "인문", "사회", "교육", "공학", "자연", "의학", "예체능"];
+        const educationCategory = ["중졸", "고졸", "전문대졸", "대졸", "대학원졸"];
         educationCategory.map((educationName, educationNum) => {
             educationNum += 1;
             const jobList = jobByEducation.filter(([, , categoryNum]) => categoryNum === educationNum);
